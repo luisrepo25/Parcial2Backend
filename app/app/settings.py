@@ -31,8 +31,7 @@ SECRET_KEY = 'django-insecure-+f(pct2142lw$ntp)0#kads52n5(vg=%9y)=cy@inw97*w*(uc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
-
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -50,6 +49,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'products.apps.ProductsConfig',
     'corsheaders', 
+    'cloudinary_storage',
+    'cloudinary',
 
     # Ventas
     'sales.apps.SalesConfig',
@@ -156,14 +157,15 @@ REST_FRAMEWORK = {
 }
 
 # Configuración de CORS
-CORS_ALLOWED_ORIGINS = os.getenv(
-    'CORS_ALLOWED_ORIGINS',
-    'http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173'
-).split(',')
+# CORS_ALLOWED_ORIGINS = os.getenv(
+#     'CORS_ALLOWED_ORIGINS',
+#     'http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173'
+# ).split(',')
 
 # Para desarrollo, permitir todos los orígenes (SOLO EN DESARROLLO)
 # CORS_ALLOW_ALL_ORIGINS = True  # Descomentar solo para testing rápido
 
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_METHODS = [
@@ -186,6 +188,20 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
 ]
+
+# Configuracion de cloudinary
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
+}
+
+# Configuración de almacenamiento por defecto para archivos multimedia
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# URLs y directorios de medios
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # Internationalization

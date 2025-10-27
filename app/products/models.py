@@ -1,5 +1,5 @@
 from django.db import models
-
+from cloudinary.models import CloudinaryField
 # Create your models here.
 
 class Categoria(models.Model):
@@ -36,7 +36,20 @@ class Producto(models.Model):
     stock = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    image_url = models.URLField(blank=True, null=True)
+    imagen = CloudinaryField(
+        'image',
+        folder='productos',  # Carpeta en Cloudinary
+        blank=True,
+        null=True,
+        transformation={
+            'quality': 'auto:good',
+            'fetch_format': 'auto',
+            'width': 800,
+            'height': 800,
+            'crop': 'limit'
+        }
+    )
+
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, related_name='productos')
     marca = models.ForeignKey(Marca, on_delete=models.CASCADE, related_name='productos')
     garantia = models.ForeignKey(Garantia, on_delete=models.CASCADE, related_name='productos', blank=True, null=True)
@@ -44,5 +57,9 @@ class Producto(models.Model):
     def __str__(self):
         return self.nombre
 
-
-
+    @property
+    def imagen_url(self):
+        """Retorna la URL completa de la imagen"""
+        if self.imagen:
+            return self.imagen.url
+        return None

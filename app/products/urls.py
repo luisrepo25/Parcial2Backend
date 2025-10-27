@@ -27,7 +27,7 @@ urlpatterns = [
     
     # Productos
     path('productos', producto.get_productos, name='get_productos'),                    
-    path('productos/create', producto.create_producto, name='create_producto'),         
+    path('productos/create', producto.create_producto, name='create_producto'),
     path('productos/<int:id>', producto.get_producto, name='get_producto'),             
     path('productos/<int:id>/update', producto.update_producto, name='update_producto'),
     path('productos/<int:id>/delete', producto.delete_producto, name='delete_producto'),
