@@ -156,12 +156,10 @@ REST_FRAMEWORK = {
 }
 
 # Configuración de CORS
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # React dev server
-    "http://127.0.0.1:3000",
-    "http://localhost:5173",  # Vite dev server (si usas Vite)
-    "http://127.0.0.1:5173",
-]
+CORS_ALLOWED_ORIGINS = os.getenv(
+    'CORS_ALLOWED_ORIGINS',
+    'http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173'
+).split(',')
 
 # Para desarrollo, permitir todos los orígenes (SOLO EN DESARROLLO)
 # CORS_ALLOW_ALL_ORIGINS = True  # Descomentar solo para testing rápido
