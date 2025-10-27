@@ -96,12 +96,11 @@ def create_producto(request):
         return JsonResponse({"ok": False, "error": str(e)}, status=500)
 
 @csrf_exempt
-@require_http_methods(["PUT", "POST"])  # Agregamos POST para compatibilidad con form-data
-@jwt_required  # Mover JWT al final
+@require_http_methods(["POST"])  # Cambiar a POST para que Django parsee multipart/form-data
+@jwt_required
 def update_producto(request, id):
     """
-    PUT /products/productos/<id>/update
-    POST /products/productos/<id>/update
+    POST /products/productos/<id>/update (cambiar en frontend también)
     Actualiza un producto existente.
     
     Content-Type: multipart/form-data
@@ -122,8 +121,16 @@ def update_producto(request, id):
         print(f"[UPDATE_PRODUCTO] ID: {id}")
         print(f"[UPDATE_PRODUCTO] Method: {request.method}")
         print(f"[UPDATE_PRODUCTO] Content-Type: {request.content_type}")
+        print(f"[UPDATE_PRODUCTO] POST keys: {list(request.POST.keys())}")
         print(f"[UPDATE_PRODUCTO] POST data: {dict(request.POST)}")
+        print(f"[UPDATE_PRODUCTO] FILES keys: {list(request.FILES.keys())}")
         print(f"[UPDATE_PRODUCTO] FILES data: {dict(request.FILES)}")
+        
+        # Intentar imprimir todos los posibles nombres de archivo
+        for key in request.FILES.keys():
+            file = request.FILES[key]
+            print(f"[UPDATE_PRODUCTO] Archivo encontrado con key '{key}': {file.name}, {file.size} bytes")
+        
         print("=" * 60)
         
         # Obtener datos del form-data
@@ -134,17 +141,17 @@ def update_producto(request, id):
         categoria_id = request.POST.get("categoria_id")
         marca_id = request.POST.get("marca_id")
         garantia_id = request.POST.get("garantia_id")
-        imagen = request.FILES.get('imagen') or request.FILES.get('image') or request.FILES.get('file')
         
-        print(f"[UPDATE_PRODUCTO] Valores recibidos:")
-        print(f"  - nombre: {nombre}")
-        print(f"  - descripcion: {descripcion}")
-        print(f"  - precio: {precio}")
-        print(f"  - stock: {stock}")
-        print(f"  - categoria_id: {categoria_id}")
-        print(f"  - marca_id: {marca_id}")
-        print(f"  - garantia_id: {garantia_id}")
-        print(f"  - imagen: {imagen}")
+        # Buscar imagen con múltiples nombres posibles
+        imagen = None
+        for possible_key in ['imagen', 'image', 'file', 'photo', 'picture']:
+            if possible_key in request.FILES:
+                imagen = request.FILES[possible_key]
+                print(f"[UPDATE_PRODUCTO] ✅ Imagen encontrada con key '{possible_key}': {imagen.name}")
+                break
+        
+        if not imagen:
+            print(f"[UPDATE_PRODUCTO] ⚠️ No se encontró imagen en FILES")
         
         # Convertir tipos si existen
         if precio is not None and precio != '':
@@ -171,17 +178,6 @@ def update_producto(request, id):
             garantia_id = int(garantia_id)
         else:
             garantia_id = None
-        
-        print(f"[UPDATE_PRODUCTO] Llamando a update_producto con:")
-        print(f"  - id: {id}")
-        print(f"  - nombre: {nombre}")
-        print(f"  - descripcion: {descripcion}")
-        print(f"  - precio: {precio}")
-        print(f"  - stock: {stock}")
-        print(f"  - categoria_id: {categoria_id}")
-        print(f"  - marca_id: {marca_id}")
-        print(f"  - garantia_id: {garantia_id}")
-        print(f"  - imagen: {imagen}")
         
         producto = producto_service.update_producto(
             id, nombre, descripcion, precio, stock, 
