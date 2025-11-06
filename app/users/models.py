@@ -5,6 +5,7 @@ class Usuario(models.Model):
     password = models.CharField(max_length=128)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    fcm_token = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return f"{self.nombres} <{self.correo}>"

@@ -16,7 +16,15 @@ class MetodoPago(models.Model):
     
 
 class NotaVenta(models.Model):
-    estado = models.BooleanField(default=True)  
+    ESTADO_CHOICES = [
+        ('pendiente', 'Pendiente'),
+        ('pagada', 'Pagada'),
+        ('fallida', 'Fallida'),
+        ('cancelada', 'Cancelada'),
+        ('reembolsada', 'Reembolsada'),
+    ]
+    
+    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente')
     metodo_pago = models.ForeignKey(MetodoPago, on_delete=models.PROTECT, related_name='notas_venta')
     total = models.DecimalField(max_digits=10, decimal_places=2)    
     # Relacion con usuario
@@ -25,18 +33,35 @@ class NotaVenta(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # Stripe
+    stripe_session_id = models.CharField(max_length=255, blank=True, null=True)
+    stripe_payment_intent = models.CharField(max_length=255, blank=True, null=True)
+    
+    class Meta:
+        db_table = 'sales_notaventa'
+        ordering = ['-created_at']
+
     def __str__(self):
-        return f"NotaVenta {self.id}"
+        return f"NotaVenta #{self.id} - {self.usuario.correo}"
 
 class Detalle_Venta(models.Model):
-    nota_venta = models.ForeignKey(NotaVenta, on_delete=models.CASCADE, related_name='detalles_venta')
+    nota_venta = models.ForeignKey(NotaVenta, on_delete=models.CASCADE, related_name='detalles')
     producto = models.ForeignKey(Producto, on_delete=models.PROTECT, related_name='detalles_venta')
     cantidad = models.PositiveIntegerField()
     precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        db_table = 'sales_detalleventa'
+    
+    def save(self, *args, **kwargs):
+        """Calcula automáticamente el subtotal antes de guardar"""
+        self.subtotal = self.cantidad * self.precio_unitario
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return f"Detalle_Venta {self.id} de NotaVenta {self.nota_venta.id}"
+        return f"{self.producto.nombre} x{self.cantidad} - NotaVenta #{self.nota_venta.id}"
 

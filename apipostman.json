@@ -1,0 +1,1154 @@
+{
+  "info": {
+    "_postman_id": "12345678-1234-1234-1234-123456789abc",
+    "name": "Backend Tienda Electrodomésticos",
+    "description": "API completa para tienda de electrodomésticos con usuarios, productos y catálogo",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Auth",
+          "item": [
+            {
+              "name": "Login",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"password123\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/users/auth",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "auth"]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Usuarios",
+          "item": [
+            {
+              "name": "Get All Users",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/users/",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", ""]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get User by ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/users/1/",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "1", ""]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create User",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\",\n  \"nombre\": \"Usuario Test\",\n  \"telefono\": \"123456789\",\n  \"direccion\": \"Calle Falsa 123\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/users/create/",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "create", ""]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update User",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Usuario Actualizado\",\n  \"telefono\": \"987654321\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/users/1/update/",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "1", "update", ""]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete User",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/users/1/delete/",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "1", "delete", ""]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Clientes",
+          "item": [
+            {
+              "name": "Get All Clientes",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/users/clientes/",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "clientes", ""]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Cliente by ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/users/clientes/1/",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "clientes", "1", ""]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Register Cliente",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"cliente@example.com\",\n  \"password\": \"password123\",\n  \"nombre\": \"Cliente Test\",\n  \"telefono\": \"123456789\",\n  \"direccion\": \"Calle Cliente 123\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/users/clientes/register/",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "clientes", "register", ""]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Cliente",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Cliente Actualizado\",\n  \"direccion\": \"Nueva Dirección\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/users/clientes/1/update/",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "clientes", "1", "update", ""]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Cliente",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/users/clientes/1/delete/",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "clientes", "1", "delete", ""]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Administradores",
+          "item": [
+            {
+              "name": "Get All Admins",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/users/admins/",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "admins", ""]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Admin by ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/users/admins/1/",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "admins", "1", ""]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Register Admin",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"password123\",\n  \"nombre\": \"Admin Test\",\n  \"telefono\": \"123456789\",\n  \"direccion\": \"Calle Admin 123\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/users/admins/register/",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "admins", "register", ""]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Admin",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Admin Actualizado\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/users/admins/1/update/",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "admins", "1", "update", ""]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Admin",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/users/admins/1/delete/",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "admins", "1", "delete", ""]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Categorías",
+          "item": [
+            {
+              "name": "Get All Categorías",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/products/categorias",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "categorias"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Categoría by ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/products/categorias/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "categorias", "1"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Categoría",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Licuadoras\",\n  \"descripcion\": \"Electrodomésticos para licuar alimentos\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/products/categorias/create",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "categorias", "create"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Categoría",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Licuadoras Premium\",\n  \"descripcion\": \"Electrodomésticos de alta gama para licuar\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/products/categorias/1/update",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "categorias", "1", "update"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Categoría",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/products/categorias/1/delete",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "categorias", "1", "delete"]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Marcas",
+          "item": [
+            {
+              "name": "Get All Marcas",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/products/marcas",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "marcas"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Marca by ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/products/marcas/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "marcas", "1"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Marca",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Samsung\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/products/marcas/create",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "marcas", "create"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Marca",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Samsung Electronics\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/products/marcas/1/update",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "marcas", "1", "update"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Marca",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/products/marcas/1/delete",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "marcas", "1", "delete"]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Garantías",
+          "item": [
+            {
+              "name": "Get All Garantías",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/products/garantias",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "garantias"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Garantía by ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/products/garantias/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "garantias", "1"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Garantía",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cobertura\": 12,\n  \"Marca\": 1\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/products/garantias/create",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "garantias", "create"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Garantía",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cobertura\": 24\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/products/garantias/1/update",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "garantias", "1", "update"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Garantía",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/products/garantias/1/delete",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "garantias", "1", "delete"]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Productos",
+          "item": [
+            {
+              "name": "Get All Productos",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/products/productos",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "productos"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Producto by ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/products/productos/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "productos", "1"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Producto (multipart)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "nombre",
+                      "value": "Licuadora XYZ 1000",
+                      "type": "text"
+                    },
+                    {
+                      "key": "descripcion",
+                      "value": "Licuadora de alta potencia con 10 velocidades",
+                      "type": "text"
+                    },
+                    {
+                      "key": "precio",
+                      "value": "299.99",
+                      "type": "text"
+                    },
+                    {
+                      "key": "stock",
+                      "value": "15",
+                      "type": "text"
+                    },
+                    {
+                      "key": "categoria_id",
+                      "value": "1",
+                      "type": "text"
+                    },
+                    {
+                      "key": "marca_id",
+                      "value": "1",
+                      "type": "text"
+                    },
+                    {
+                      "key": "garantia_id",
+                      "value": "1",
+                      "type": "text"
+                    },
+                    {
+                      "key": "imagen",
+                      "type": "file",
+                      "src": ""
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/products/productos/create",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "productos", "create"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Producto (multipart)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "nombre",
+                      "value": "Licuadora XYZ 2000",
+                      "type": "text"
+                    },
+                    {
+                      "key": "precio",
+                      "value": "349.99",
+                      "type": "text"
+                    },
+                    {
+                      "key": "stock",
+                      "value": "20",
+                      "type": "text"
+                    },
+                    {
+                      "key": "imagen",
+                      "type": "file",
+                      "src": ""
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/products/productos/1/update",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "productos", "1", "update"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Producto",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/products/productos/1/delete",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "productos", "1", "delete"]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Catálogo (Público)",
+      "item": [
+        {
+          "name": "Productos",
+          "item": [
+            {
+              "name": "Listar Productos",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/catalogo/productos/?page=1&per_page=12",
+                  "host": ["{{base_url}}"],
+                  "path": ["catalogo", "productos", ""],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "per_page",
+                      "value": "12"
+                    }
+                  ]
+                },
+                "description": "Lista todos los productos con paginación (sin autenticación)"
+              },
+              "response": []
+            },
+            {
+              "name": "Detalle Producto",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/catalogo/productos/1/",
+                  "host": ["{{base_url}}"],
+                  "path": ["catalogo", "productos", "1", ""]
+                },
+                "description": "Obtiene el detalle completo de un producto"
+              },
+              "response": []
+            },
+            {
+              "name": "Buscar Productos",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/catalogo/productos/buscar?q=licuadora&categoria=1&marca=2&min_precio=100&max_precio=500&page=1&per_page=12",
+                  "host": ["{{base_url}}"],
+                  "path": ["catalogo", "productos", "buscar"],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "licuadora",
+                      "description": "Texto de búsqueda"
+                    },
+                    {
+                      "key": "categoria",
+                      "value": "1",
+                      "description": "ID de categoría (opcional)"
+                    },
+                    {
+                      "key": "marca",
+                      "value": "2",
+                      "description": "ID de marca (opcional)"
+                    },
+                    {
+                      "key": "min_precio",
+                      "value": "100",
+                      "description": "Precio mínimo (opcional)"
+                    },
+                    {
+                      "key": "max_precio",
+                      "value": "500",
+                      "description": "Precio máximo (opcional)"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "per_page",
+                      "value": "12"
+                    }
+                  ]
+                },
+                "description": "Busca productos con filtros múltiples"
+              },
+              "response": []
+            },
+            {
+              "name": "Productos Destacados",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/catalogo/productos/destacados/?limit=12",
+                  "host": ["{{base_url}}"],
+                  "path": ["catalogo", "productos", "destacados", ""],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "12"
+                    }
+                  ]
+                },
+                "description": "Obtiene productos destacados"
+              },
+              "response": []
+            },
+            {
+              "name": "Productos Nuevos",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/catalogo/productos/nuevos/?dias=30&limit=12",
+                  "host": ["{{base_url}}"],
+                  "path": ["catalogo", "productos", "nuevos", ""],
+                  "query": [
+                    {
+                      "key": "dias",
+                      "value": "30",
+                      "description": "Últimos N días"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "12"
+                    }
+                  ]
+                },
+                "description": "Productos de los últimos 30 días"
+              },
+              "response": []
+            },
+            {
+              "name": "Productos Más Vendidos",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/catalogo/productos/mas-vendidos/?limit=10",
+                  "host": ["{{base_url}}"],
+                  "path": ["catalogo", "productos", "mas-vendidos", ""],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    }
+                  ]
+                },
+                "description": "Productos más vendidos (requiere integración con ventas)"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Categorías",
+          "item": [
+            {
+              "name": "Listar Categorías",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/catalogo/categorias/",
+                  "host": ["{{base_url}}"],
+                  "path": ["catalogo", "categorias", ""]
+                },
+                "description": "Lista todas las categorías con cantidad de productos"
+              },
+              "response": []
+            },
+            {
+              "name": "Productos por Categoría",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/catalogo/categorias/1/productos/?page=1&per_page=12&order_by=precio&sort=asc",
+                  "host": ["{{base_url}}"],
+                  "path": ["catalogo", "categorias", "1", "productos", ""],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "per_page",
+                      "value": "12"
+                    },
+                    {
+                      "key": "order_by",
+                      "value": "precio",
+                      "description": "precio, nombre, created_at, stock"
+                    },
+                    {
+                      "key": "sort",
+                      "value": "asc",
+                      "description": "asc o desc"
+                    }
+                  ]
+                },
+                "description": "Productos de una categoría específica con ordenamiento"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Marcas",
+          "item": [
+            {
+              "name": "Listar Marcas",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/catalogo/marcas/",
+                  "host": ["{{base_url}}"],
+                  "path": ["catalogo", "marcas", ""]
+                },
+                "description": "Lista todas las marcas con cantidad de productos"
+              },
+              "response": []
+            },
+            {
+              "name": "Productos por Marca",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/catalogo/marcas/1/productos/?page=1&per_page=12&order_by=precio&sort=desc",
+                  "host": ["{{base_url}}"],
+                  "path": ["catalogo", "marcas", "1", "productos", ""],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "per_page",
+                      "value": "12"
+                    },
+                    {
+                      "key": "order_by",
+                      "value": "precio",
+                      "description": "precio, nombre, created_at, stock"
+                    },
+                    {
+                      "key": "sort",
+                      "value": "desc",
+                      "description": "asc o desc"
+                    }
+                  ]
+                },
+                "description": "Productos de una marca específica con ordenamiento"
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

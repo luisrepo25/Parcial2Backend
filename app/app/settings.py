@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'corsheaders', 
     'cloudinary_storage',
     'cloudinary',
+    'catalogo',
 
     # Ventas
     'sales.apps.SalesConfig',
