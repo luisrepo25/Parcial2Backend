@@ -440,3 +440,89 @@ def enviar_notificacion_por_tema(request):
             'ok': False,
             'error': str(e)
         }, status=500)
+
+
+@csrf_exempt
+@jwt_required
+@require_http_methods(["GET"])
+def obtener_mis_notificaciones(request):
+    """
+    Obtiene todas las notificaciones del usuario autenticado
+    
+    Query params:
+    - no_leidas: Si es "true", solo retorna notificaciones no leídas
+    
+    Response:
+    {
+        "ok": true,
+        "notificaciones": [...],
+        "total": 10
+    }
+    """
+    try:
+        solo_no_leidas = request.GET.get('no_leidas', 'false').lower() == 'true'
+        
+        resultado = fcm_service.obtener_notificaciones_usuario(
+            idUsuario=request.usuario.id,
+            solo_no_leidas=solo_no_leidas
+        )
+        
+        if resultado['success']:
+            return JsonResponse({
+                'ok': True,
+                'notificaciones': resultado['notificaciones'],
+                'total': resultado['total']
+            })
+        else:
+            return JsonResponse({
+                'ok': False,
+                'error': resultado.get('error', 'Error al obtener notificaciones')
+            }, status=500)
+        
+    except Exception as e:
+        logger.error(f"❌ Error al obtener notificaciones: {str(e)}")
+        return JsonResponse({
+            'ok': False,
+            'error': str(e)
+        }, status=500)
+
+
+@csrf_exempt
+@jwt_required
+@require_http_methods(["PUT"])
+def marcar_notificacion_leida(request, notificacion_id):
+    """
+    Marca una notificación como leída para el usuario autenticado
+    
+    Params:
+    - notificacion_id: ID de la notificación
+    
+    Response:
+    {
+        "ok": true,
+        "message": "Notificación marcada como leída"
+    }
+    """
+    try:
+        resultado = fcm_service.leer_notificacion(
+            idUsuario=request.usuario.id,
+            idNotificacion=notificacion_id
+        )
+        
+        if resultado['success']:
+            return JsonResponse({
+                'ok': True,
+                'message': resultado['message']
+            })
+        else:
+            return JsonResponse({
+                'ok': False,
+                'error': resultado.get('error', 'Error al marcar notificación')
+            }, status=404 if 'no encontrada' in resultado.get('error', '') else 500)
+        
+    except Exception as e:
+        logger.error(f"❌ Error al marcar notificación: {str(e)}")
+        return JsonResponse({
+            'ok': False,
+            'error': str(e)
+        }, status=500)

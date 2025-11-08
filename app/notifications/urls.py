@@ -16,4 +16,8 @@ urlpatterns = [
     path('send/', views.enviar_notificacion_usuario, name='enviar_notificacion_usuario'),
     path('send-all/', views.enviar_notificacion_masiva, name='enviar_notificacion_masiva'),
     path('send-topic/', views.enviar_notificacion_por_tema, name='enviar_notificacion_por_tema'),
+    
+    # Consulta de notificaciones
+    path('my-notifications/', views.obtener_mis_notificaciones, name='obtener_mis_notificaciones'),
+    path('read/<int:notificacion_id>/', views.marcar_notificacion_leida, name='marcar_notificacion_leida'),
 ]

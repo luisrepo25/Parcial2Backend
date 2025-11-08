@@ -4,6 +4,7 @@ from firebase_admin import credentials, messaging
 from django.conf import settings
 import logging
 from users.models import Usuario
+from notifications.models import Notificacion, Noti_Usuario
 
 logger = logging.getLogger(__name__)
 
@@ -24,11 +25,30 @@ def inicializar_firebase():
         except ValueError:
             # No hay app inicializada, crear una nueva
             try:
-                cred_path = os.path.join(settings.BASE_DIR, os.getenv('FIREBASE_CREDENTIALS_PATH', 'firebase-credentials.json'))
+                # Buscar archivo de credenciales en múltiples ubicaciones
+                possible_paths = [
+                    # Ruta en Render (Secret Files)
+                    '/etc/secrets/firebase-credentials.json',
+                    # Ruta local (desarrollo)
+                    os.path.join(settings.BASE_DIR, os.getenv('FIREBASE_CREDENTIALS_PATH', 'firebase-credentials.json')),
+                    # Ruta alternativa
+                    os.path.join(settings.BASE_DIR, 'firebase-credentials.json'),
+                ]
                 
-                if not os.path.exists(cred_path):
-                    logger.error(f"❌ Archivo de credenciales no encontrado: {cred_path}")
-                    raise FileNotFoundError(f"Firebase credentials not found at: {cred_path}")
+                cred_path = None
+                for path in possible_paths:
+                    if os.path.exists(path):
+                        cred_path = path
+                        logger.info(f"📁 Archivo de credenciales encontrado en: {path}")
+                        break
+                
+                if not cred_path:
+                    logger.error(f"❌ Archivo de credenciales no encontrado en ninguna ubicación:")
+                    for path in possible_paths:
+                        logger.error(f"   - {path}")
+                    raise FileNotFoundError(
+                        f"Firebase credentials not found. Tried: {', '.join(possible_paths)}"
+                    )
                 
                 cred = credentials.Certificate(cred_path)
                 firebase_admin.initialize_app(cred)
@@ -41,10 +61,10 @@ def inicializar_firebase():
 
 def enviar_notificacion_fcm(idUsuario, titulo, mensaje, data=None):
     """
-    Envía una notificación push a un dispositivo específico
+    Envía una notificación push a un dispositivo específico y la guarda en BD
     
     Args:
-        token: FCM token del dispositivo
+        idUsuario: ID del usuario destinatario
         titulo: Título de la notificación
         mensaje: Cuerpo de la notificación
         data: Datos adicionales (dict)
@@ -53,13 +73,36 @@ def enviar_notificacion_fcm(idUsuario, titulo, mensaje, data=None):
         dict: Resultado del envío
     """
     try:
+        # Obtener el usuario
+        usuario = Usuario.objects.get(id=idUsuario)
+        token = usuario.fcm_token
+        
+        if not token:
+            logger.warning(f"⚠️ Usuario {idUsuario} no tiene token FCM")
+            return {
+                'success': False,
+                'error': 'Usuario no tiene token FCM registrado'
+            }
+        
+        # 1. Guardar notificación en BD
+        notificacion = Notificacion.objects.create(
+            titulo=titulo,
+            mensaje=mensaje
+        )
+        
+        # 2. Crear relación Noti_Usuario
+        noti_usuario = Noti_Usuario.objects.create(
+            notificacion=notificacion,
+            usuario=usuario,
+            leida=False
+        )
+        
+        logger.info(f"💾 Notificación #{notificacion.id} guardada para usuario {usuario.correo}")
+        
+        # 3. Enviar notificación push
         inicializar_firebase()
         
         logger.info(f"📤 Enviando notificación a token: {token[:20]}...")
-
-        # obtener el fcm token del usuario
-        usuario = Usuario.objects.get(id=idUsuario)
-        token = usuario.fcm_token
         
         # Construir mensaje
         message = messaging.Message(
@@ -67,7 +110,10 @@ def enviar_notificacion_fcm(idUsuario, titulo, mensaje, data=None):
                 title=titulo,
                 body=mensaje,
             ),
-            data=data or {},
+            data={
+                **(data or {}),
+                'notificacion_id': str(notificacion.id),  # ID para poder marcar como leída
+            },
             token=token,
         )
         
@@ -77,9 +123,16 @@ def enviar_notificacion_fcm(idUsuario, titulo, mensaje, data=None):
         
         return {
             'success': True,
-            'message_id': response
+            'message_id': response,
+            'notificacion_id': notificacion.id
         }
         
+    except Usuario.DoesNotExist:
+        logger.error(f"❌ Usuario {idUsuario} no encontrado")
+        return {
+            'success': False,
+            'error': 'Usuario no encontrado'
+        }
     except messaging.UnregisteredError:
         logger.warning(f"⚠️ Token no registrado o expirado: {token[:20]}...")
         return {
@@ -94,12 +147,13 @@ def enviar_notificacion_fcm(idUsuario, titulo, mensaje, data=None):
         }
 
 
-def enviar_notificacion_multiple(tokens, titulo, mensaje, data=None):
+def enviar_notificacion_multiple(usuarios_ids, titulo, mensaje, data=None):
     """
-    Envía notificación a múltiples dispositivos
+    Envía notificación a múltiples usuarios y guarda en BD
     
     Args:
-        tokens: Lista de FCM tokens
+        usuarios_ids: Lista de IDs de usuarios
+            ejemplo: [1, 2, 3, ...]
         titulo: Título de la notificación
         mensaje: Cuerpo de la notificación
         data: Datos adicionales (dict)
@@ -108,6 +162,44 @@ def enviar_notificacion_multiple(tokens, titulo, mensaje, data=None):
         dict: Resultado del envío
     """
     try:
+        # 1. Guardar notificación en BD
+        notificacion = Notificacion.objects.create(
+            titulo=titulo,
+            mensaje=mensaje
+        )
+        
+        logger.info(f"💾 Notificación #{notificacion.id} creada para {len(usuarios_ids)} usuarios")
+        
+        # 2. Obtener usuarios con tokens
+        usuarios = Usuario.objects.filter(
+            id__in=usuarios_ids,
+            fcm_token__isnull=False
+        ).exclude(fcm_token='')
+        
+        if not usuarios.exists():
+            logger.warning("⚠️ Ningún usuario tiene token FCM registrado")
+            return {
+                'success': False,
+                'error': 'Ningún usuario tiene notificaciones habilitadas'
+            }
+        
+        # 3. Crear relaciones Noti_Usuario para todos
+        noti_usuarios = []
+        tokens = []
+        for usuario in usuarios:
+            noti_usuarios.append(
+                Noti_Usuario(
+                    notificacion=notificacion,
+                    usuario=usuario,
+                    leida=False
+                )
+            )
+            tokens.append(usuario.fcm_token)
+        
+        Noti_Usuario.objects.bulk_create(noti_usuarios)
+        logger.info(f"💾 {len(noti_usuarios)} relaciones Noti_Usuario creadas")
+        
+        # 4. Enviar notificaciones push
         inicializar_firebase()
         
         logger.info(f"📤 Enviando notificación a {len(tokens)} dispositivos")
@@ -118,7 +210,10 @@ def enviar_notificacion_multiple(tokens, titulo, mensaje, data=None):
                 title=titulo,
                 body=mensaje,
             ),
-            data=data or {},
+            data={
+                **(data or {}),
+                'notificacion_id': str(notificacion.id),
+            },
             tokens=tokens,
         )
         
@@ -132,11 +227,97 @@ def enviar_notificacion_multiple(tokens, titulo, mensaje, data=None):
         return {
             'success': True,
             'success_count': response.success_count,
-            'failure_count': response.failure_count
+            'failure_count': response.failure_count,
+            'notificacion_id': notificacion.id
         }
         
     except Exception as e:
         logger.error(f"❌ Error al enviar notificaciones: {str(e)}")
+        return {
+            'success': False,
+            'error': str(e)
+        }
+    
+def leer_notificacion(idUsuario, idNotificacion):
+    """
+    Marca una notificación como leída para un usuario específico
+    
+    Args:
+        idUsuario: ID del usuario
+        idNotificacion: ID de la notificación
+    
+    Returns:
+        dict: Resultado de la operación
+    """
+    try:
+        # Buscar la relación Noti_Usuario
+        noti_usuario = Noti_Usuario.objects.get(
+            notificacion_id=idNotificacion,
+            usuario_id=idUsuario
+        )
+        
+        # Marcar como leída
+        noti_usuario.leida = True
+        noti_usuario.save()
+        
+        logger.info(f"✅ Notificación {idNotificacion} marcada como leída para el usuario {idUsuario}")
+        
+        return {
+            'success': True,
+            'message': f'Notificación {idNotificacion} marcada como leída.'
+        }
+        
+    except Noti_Usuario.DoesNotExist:
+        logger.error(f"❌ Notificación {idNotificacion} no encontrada para el usuario {idUsuario}")
+        return {
+            'success': False,
+            'error': 'Notificación no encontrada para este usuario'
+        }
+    except Exception as e:
+        logger.error(f"❌ Error al marcar notificación como leída: {str(e)}")
+        return {
+            'success': False,
+            'error': str(e)
+        }
+
+
+def obtener_notificaciones_usuario(idUsuario, solo_no_leidas=False):
+    """
+    Obtiene todas las notificaciones de un usuario
+    
+    Args:
+        idUsuario: ID del usuario
+        solo_no_leidas: Si True, solo retorna notificaciones no leídas
+    
+    Returns:
+        dict: Lista de notificaciones
+    """
+    try:
+        query = Noti_Usuario.objects.filter(usuario_id=idUsuario).select_related('notificacion')
+        
+        if solo_no_leidas:
+            query = query.filter(leida=False)
+        
+        notificaciones = []
+        for noti_usuario in query:
+            notificaciones.append({
+                'id': noti_usuario.notificacion.id,
+                'titulo': noti_usuario.notificacion.titulo,
+                'mensaje': noti_usuario.notificacion.mensaje,
+                'leida': noti_usuario.leida,
+                'created_at': noti_usuario.created_at.isoformat(),
+            })
+        
+        logger.info(f"📋 {len(notificaciones)} notificaciones obtenidas para usuario {idUsuario}")
+        
+        return {
+            'success': True,
+            'notificaciones': notificaciones,
+            'total': len(notificaciones)
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error al obtener notificaciones: {str(e)}")
         return {
             'success': False,
             'error': str(e)

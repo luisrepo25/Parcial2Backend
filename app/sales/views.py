@@ -165,7 +165,7 @@ def webhook_stripe(request):
                     fcm_service.enviar_notificacion_fcm(
                         idUsuario=nota_venta.usuario_id,
                         titulo="Pago Confirmado",
-                        mensaje=f"Tu pago para la NotaVenta #{nota_venta_id} ha sido confirmado.",
+                        mensaje=f"Tu pago de {nota_venta.total}$ para la NotaVenta #{nota_venta_id} ha sido confirmado.",
                         data={
                             "tipo": "pago_confirmado",
                             "nota_venta_id": str(nota_venta_id)
