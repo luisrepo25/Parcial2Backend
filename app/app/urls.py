@@ -26,5 +26,6 @@ urlpatterns = [
     path('', views.hello  ),
     path('products/', include('products.urls')),
     path('catalogo/', include('catalogo.urls')),
-    path('sales/', include('sales.urls')), 
+    path('sales/', include('sales.urls')),
+    path('notifications/', include('notifications.urls')),
 ]

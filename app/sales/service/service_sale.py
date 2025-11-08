@@ -101,26 +101,47 @@ def confirmar_pago(nota_venta_id, stripe_session_id, stripe_payment_intent):
         ValueError: Si la venta ya fue confirmada o no se puede procesar
         NotaVenta.DoesNotExist: Si la nota de venta no existe
     """
-    nota_venta = NotaVenta.objects.select_for_update().get(id=nota_venta_id)
+    import logging
+    logger = logging.getLogger(__name__)
+    
+    logger.info(f"🔄 [confirmar_pago] Iniciando para NotaVenta #{nota_venta_id}")
+    logger.info(f"   - Session ID: {stripe_session_id}")
+    logger.info(f"   - Payment Intent: {stripe_payment_intent}")
+    
+    try:
+        nota_venta = NotaVenta.objects.select_for_update().get(id=nota_venta_id)
+        logger.info(f"✅ NotaVenta encontrada - Estado actual: {nota_venta.estado}")
+        logger.info(f"   - Total: ${nota_venta.total}")
+        logger.info(f"   - Usuario ID: {nota_venta.usuario_id}")
+    except NotaVenta.DoesNotExist:
+        logger.error(f"❌ NotaVenta #{nota_venta_id} NO EXISTE en la base de datos")
+        raise
     
     # Verificar que la venta está pendiente
     if nota_venta.estado != 'pendiente':
+        logger.warning(f"⚠️ La venta ya fue procesada con estado: {nota_venta.estado}")
         raise ValueError(
             f"La venta ya fue procesada con estado: {nota_venta.estado}"
         )
     
     # Actualizar información de Stripe
+    logger.info("💾 Actualizando información de Stripe y estado...")
     nota_venta.stripe_session_id = stripe_session_id
     nota_venta.stripe_payment_intent = stripe_payment_intent
     nota_venta.estado = 'pagada'
     nota_venta.save()
+    logger.info(f"✅ Estado actualizado a: {nota_venta.estado}")
     
     # Reducir stock de productos
+    logger.info("📦 Actualizando stock de productos...")
     for detalle in nota_venta.detalles.select_related('producto'):
+        logger.info(f"   - Producto: {detalle.producto.nombre} | Cantidad: {detalle.cantidad}")
         # Usar F() para evitar race conditions
         Producto.objects.filter(id=detalle.producto.id).update(
             stock=F('stock') - detalle.cantidad
         )
+    
+    logger.info(f"✅ [confirmar_pago] Completado exitosamente para NotaVenta #{nota_venta_id}")
     
     return nota_venta
 

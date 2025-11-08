@@ -7,10 +7,12 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 import json
 import logging
+import os
 
 from sales.service import service_stripe, service_sale
 from users.services.jwt import jwt_required
 from sales.models import NotaVenta
+from notifications.services.fcm_service import fcm_service
 
 # Configurar logging
 logger = logging.getLogger(__name__)
@@ -121,26 +123,68 @@ def webhook_stripe(request):
     sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
     
     try:
+        # Log para debugging
+        logger.info("=" * 80)
+        logger.info("🔔 WEBHOOK STRIPE RECIBIDO")
+        logger.info(f"Signature: {sig_header[:20] if sig_header else 'NO SIGNATURE'}...")
+        logger.info(f"Webhook secret configurado: {os.getenv('STRIPE_WEBHOOK_SECRET')[:10] if os.getenv('STRIPE_WEBHOOK_SECRET') else 'NO CONFIGURADO'}...")
+        
         # Verificar la firma del webhook
         event = service_stripe.verificar_webhook_signature(payload, sig_header)
         
-        logger.info(f"Webhook recibido: {event['type']}")
+        logger.info(f"✅ Webhook verificado exitosamente")
+        logger.info(f"Tipo de evento: {event['type']}")
+        logger.info(f"Event ID: {event.get('id', 'N/A')}")
         
         # Manejar evento: Checkout completado
         if event['type'] == 'checkout.session.completed':
             session = event['data']['object']
             nota_venta_id = session['metadata'].get('nota_venta_id')
+            session_id = session['id']
+            payment_intent = session.get('payment_intent')
+            
+            logger.info(f"💰 CHECKOUT COMPLETADO")
+            logger.info(f"   - Session ID: {session_id}")
+            logger.info(f"   - Payment Intent: {payment_intent}")
+            logger.info(f"   - Nota Venta ID (metadata): {nota_venta_id}")
+            logger.info(f"   - Amount: {session.get('amount_total', 0) / 100}")
+            logger.info(f"   - Customer Email: {session.get('customer_details', {}).get('email', 'N/A')}")
             
             if nota_venta_id:
                 try:
+                    logger.info(f"🔄 Intentando confirmar pago para NotaVenta #{nota_venta_id}...")
+                    
                     service_sale.confirmar_pago(
                         nota_venta_id=int(nota_venta_id),
-                        stripe_session_id=session['id'],
-                        stripe_payment_intent=session.get('payment_intent')
+                        stripe_session_id=session_id,
+                        stripe_payment_intent=payment_intent
                     )
-                    logger.info(f"Pago confirmado: NotaVenta #{nota_venta_id}")
+                    
+                    # Enviar por notifiacion al usuario que el pago fue confirmado
+                    nota_venta = NotaVenta.objects.get(id=nota_venta_id)
+                    fcm_service.enviar_notificacion_usuario(
+                        usuario_id=nota_venta.usuario_id,
+                        titulo="Pago Confirmado",
+                        mensaje=f"Tu pago para la NotaVenta #{nota_venta_id} ha sido confirmado.",
+                        data={
+                            "tipo": "pago_confirmado",
+                            "nota_venta_id": str(nota_venta_id)
+                        }
+                    )
+
+
+                    logger.info(f"✅ PAGO CONFIRMADO EXITOSAMENTE: NotaVenta #{nota_venta_id}")
+                    logger.info("=" * 80)
+                    
+                except NotaVenta.DoesNotExist:
+                    logger.error(f"❌ NotaVenta #{nota_venta_id} NO ENCONTRADA en la base de datos")
                 except Exception as e:
-                    logger.error(f"Error al confirmar pago: {str(e)}")
+                    logger.error(f"❌ ERROR al confirmar pago: {str(e)}")
+                    logger.error(f"Tipo de error: {type(e).__name__}")
+                    import traceback
+                    logger.error(traceback.format_exc())
+            else:
+                logger.warning(f"⚠️ No se encontró nota_venta_id en metadata del checkout")
         
         # Manejar evento: Pago fallido
         elif event['type'] == 'payment_intent.payment_failed':
@@ -393,14 +437,20 @@ def verificar_session(request, session_id):
     }
     """
     try:
+        logger.info(f"🔍 Verificando session: {session_id}")
+        
         # Obtener sesión de Stripe
         session = service_stripe.obtener_session(session_id)
+        logger.info(f"   Stripe Status: {session.status}")
+        logger.info(f"   Payment Status: {session.payment_status}")
         
         # Buscar nota de venta asociada
         nota_venta = NotaVenta.objects.get(stripe_session_id=session_id)
+        logger.info(f"   NotaVenta #{nota_venta.id} - Estado DB: {nota_venta.estado}")
         
         # Verificar que pertenece al usuario
         if nota_venta.usuario_id != request.usuario.id:
+            logger.warning(f"⚠️ Usuario {request.usuario.id} intentó acceder a venta de usuario {nota_venta.usuario_id}")
             return JsonResponse({
                 'ok': False,
                 'error': 'No autorizado'
