@@ -3,7 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 import json
 from users.models import Usuario
-from users.services.jwt import verify_token
+from users.services.jwt import jwt_required
 from .services import fcm_service
 import logging
 
@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 @csrf_exempt
+@jwt_required
 @require_http_methods(["POST"])
 def registrar_token_fcm(request):
     """
@@ -28,14 +29,6 @@ def registrar_token_fcm(request):
     }
     """
     try:
-        # Verificar autenticación
-        user_data = verify_token(request)
-        if not user_data:
-            return JsonResponse({
-                'ok': False,
-                'error': 'No autorizado'
-            }, status=401)
-        
         data = json.loads(request.body)
         fcm_token = data.get('token')
         
@@ -45,23 +38,17 @@ def registrar_token_fcm(request):
                 'error': 'Token FCM requerido'
             }, status=400)
         
-        # Actualizar token del usuario
-        usuario = Usuario.objects.get(id=user_data['usuario_id'])
-        usuario.fcm_token = fcm_token
-        usuario.save()
+        # Actualizar token del usuario (disponible en request.usuario gracias al decorador)
+        request.usuario.fcm_token = fcm_token
+        request.usuario.save()
         
-        logger.info(f"✅ Token FCM registrado para usuario {usuario.correo}")
+        logger.info(f"✅ Token FCM registrado para usuario {request.usuario.correo}")
         
         return JsonResponse({
             'ok': True,
             'message': 'Token FCM registrado exitosamente'
         })
         
-    except Usuario.DoesNotExist:
-        return JsonResponse({
-            'ok': False,
-            'error': 'Usuario no encontrado'
-        }, status=404)
     except Exception as e:
         logger.error(f"❌ Error al registrar token FCM: {str(e)}")
         return JsonResponse({
@@ -71,6 +58,7 @@ def registrar_token_fcm(request):
 
 
 @csrf_exempt
+@jwt_required
 @require_http_methods(["DELETE"])
 def eliminar_token_fcm(request):
     """
@@ -83,29 +71,16 @@ def eliminar_token_fcm(request):
     }
     """
     try:
-        user_data = verify_token(request)
-        if not user_data:
-            return JsonResponse({
-                'ok': False,
-                'error': 'No autorizado'
-            }, status=401)
+        request.usuario.fcm_token = None
+        request.usuario.save()
         
-        usuario = Usuario.objects.get(id=user_data['usuario_id'])
-        usuario.fcm_token = None
-        usuario.save()
-        
-        logger.info(f"✅ Token FCM eliminado para usuario {usuario.correo}")
+        logger.info(f"✅ Token FCM eliminado para usuario {request.usuario.correo}")
         
         return JsonResponse({
             'ok': True,
             'message': 'Token FCM eliminado'
         })
         
-    except Usuario.DoesNotExist:
-        return JsonResponse({
-            'ok': False,
-            'error': 'Usuario no encontrado'
-        }, status=404)
     except Exception as e:
         logger.error(f"❌ Error al eliminar token FCM: {str(e)}")
         return JsonResponse({
@@ -115,6 +90,7 @@ def eliminar_token_fcm(request):
 
 
 @csrf_exempt
+@jwt_required
 @require_http_methods(["POST"])
 def enviar_notificacion_test(request):
     """
@@ -136,16 +112,7 @@ def enviar_notificacion_test(request):
     }
     """
     try:
-        user_data = verify_token(request)
-        if not user_data:
-            return JsonResponse({
-                'ok': False,
-                'error': 'No autorizado'
-            }, status=401)
-        
-        usuario = Usuario.objects.get(id=user_data['usuario_id'])
-        
-        if not usuario.fcm_token:
+        if not request.usuario.fcm_token:
             return JsonResponse({
                 'ok': False,
                 'error': 'Usuario no tiene token FCM registrado. Debe registrar su dispositivo primero.'
@@ -156,12 +123,12 @@ def enviar_notificacion_test(request):
         mensaje = data.get('mensaje', 'Si ves esto, las notificaciones funcionan correctamente!')
         
         resultado = fcm_service.enviar_notificacion_fcm(
-            token=usuario.fcm_token,
+            token=request.usuario.fcm_token,
             titulo=titulo,
             mensaje=mensaje,
             data={
                 'tipo': 'test',
-                'usuario_id': str(usuario.id)
+                'usuario_id': str(request.usuario.id)
             }
         )
         
@@ -184,6 +151,7 @@ def enviar_notificacion_test(request):
 
 
 @csrf_exempt
+@jwt_required
 @require_http_methods(["POST"])
 def suscribir_tema(request):
     """
@@ -201,16 +169,7 @@ def suscribir_tema(request):
     }
     """
     try:
-        user_data = verify_token(request)
-        if not user_data:
-            return JsonResponse({
-                'ok': False,
-                'error': 'No autorizado'
-            }, status=401)
-        
-        usuario = Usuario.objects.get(id=user_data['usuario_id'])
-        
-        if not usuario.fcm_token:
+        if not request.usuario.fcm_token:
             return JsonResponse({
                 'ok': False,
                 'error': 'Usuario no tiene token FCM registrado'
@@ -225,7 +184,7 @@ def suscribir_tema(request):
                 'error': 'Tema requerido'
             }, status=400)
         
-        resultado = fcm_service.suscribir_a_tema(usuario.fcm_token, tema)
+        resultado = fcm_service.suscribir_a_tema(request.usuario.fcm_token, tema)
         
         if resultado['success']:
             return JsonResponse({
@@ -247,6 +206,7 @@ def suscribir_tema(request):
 
 
 @csrf_exempt
+@jwt_required
 @require_http_methods(["POST"])
 def enviar_notificacion_usuario(request):
     """
@@ -272,13 +232,6 @@ def enviar_notificacion_usuario(request):
     }
     """
     try:
-        # Verificar autenticación (solo admin puede enviar notificaciones a otros)
-        user_data = verify_token(request)
-        if not user_data:
-            return JsonResponse({
-                'ok': False,
-                'error': 'No autorizado'
-            }, status=401)
         
         data = json.loads(request.body)
         usuario_id = data.get('usuario_id')
@@ -339,6 +292,7 @@ def enviar_notificacion_usuario(request):
 
 
 @csrf_exempt
+@jwt_required
 @require_http_methods(["POST"])
 def enviar_notificacion_masiva(request):
     """
@@ -363,13 +317,6 @@ def enviar_notificacion_masiva(request):
     }
     """
     try:
-        # Verificar autenticación (solo admin)
-        user_data = verify_token(request)
-        if not user_data:
-            return JsonResponse({
-                'ok': False,
-                'error': 'No autorizado'
-            }, status=401)
         
         data = json.loads(request.body)
         titulo = data.get('titulo')
@@ -429,6 +376,7 @@ def enviar_notificacion_masiva(request):
 
 
 @csrf_exempt
+@jwt_required
 @require_http_methods(["POST"])
 def enviar_notificacion_por_tema(request):
     """
@@ -452,13 +400,6 @@ def enviar_notificacion_por_tema(request):
     }
     """
     try:
-        # Verificar autenticación
-        user_data = verify_token(request)
-        if not user_data:
-            return JsonResponse({
-                'ok': False,
-                'error': 'No autorizado'
-            }, status=401)
         
         data = json.loads(request.body)
         tema = data.get('tema')

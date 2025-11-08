@@ -12,7 +12,7 @@ import os
 from sales.service import service_stripe, service_sale
 from users.services.jwt import jwt_required
 from sales.models import NotaVenta
-from notifications.services.fcm_service import fcm_service
+from notifications.services import fcm_service
 
 # Configurar logging
 logger = logging.getLogger(__name__)
