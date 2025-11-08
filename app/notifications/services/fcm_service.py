@@ -3,6 +3,7 @@ import firebase_admin
 from firebase_admin import credentials, messaging
 from django.conf import settings
 import logging
+from users.models import Usuario
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +39,7 @@ def inicializar_firebase():
                 raise
 
 
-def enviar_notificacion_fcm(token, titulo, mensaje, data=None):
+def enviar_notificacion_fcm(idUsuario, titulo, mensaje, data=None):
     """
     Envía una notificación push a un dispositivo específico
     
@@ -55,6 +56,10 @@ def enviar_notificacion_fcm(token, titulo, mensaje, data=None):
         inicializar_firebase()
         
         logger.info(f"📤 Enviando notificación a token: {token[:20]}...")
+
+        # obtener el fcm token del usuario
+        usuario = Usuario.objects.get(id=idUsuario)
+        token = usuario.fcm_token
         
         # Construir mensaje
         message = messaging.Message(
