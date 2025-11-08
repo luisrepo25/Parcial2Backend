@@ -96,7 +96,117 @@ Content-Type: application/json
 
 ---
 
-## 2. ✅ Verificar Sesión de Pago
+## 2. 📱 Crear Payment Intent (Apps Móviles)
+
+Crea un Payment Intent para pagos nativos en aplicaciones móviles (Flutter, React Native, etc.). Este endpoint es específico para integrar Stripe directamente en la app móvil.
+
+### Endpoint
+
+```
+POST /sales/create-payment/
+```
+
+### Headers
+
+```http
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+```
+
+### Body - Request
+
+```json
+[
+  {
+    "producto_id": 1,
+    "cantidad": 2
+  },
+  {
+    "producto_id": 3,
+    "cantidad": 1
+  }
+]
+```
+
+**Nota:** El body es un array directamente, no un objeto con propiedad `items`.
+
+### Response - Éxito (200)
+
+```json
+{
+  "ok": true,
+  "clientSecret": "pi_3ABC123DEF456GHI_secret_xyz789ABC",
+  "nota_venta_id": 15,
+  "total": 299.98,
+  "payment_intent_id": "pi_3ABC123DEF456GHI"
+}
+```
+
+**Uso en Flutter:**
+
+```dart
+import 'package:flutter_stripe/flutter_stripe.dart';
+
+// Usar el clientSecret con Stripe SDK
+await Stripe.instance.initPaymentSheet(
+  paymentSheetParameters: SetupPaymentSheetParameters(
+    paymentIntentClientSecret: clientSecret,
+    merchantDisplayName: 'Tu Tienda',
+  ),
+);
+
+await Stripe.instance.presentPaymentSheet();
+```
+
+### Response - Error (400) - Body inválido
+
+```json
+{
+  "ok": false,
+  "error": "Se requiere una lista con al menos un item: [{\"producto_id\": int, \"cantidad\": int}]"
+}
+```
+
+### Response - Error (400) - Stock insuficiente
+
+```json
+{
+  "ok": false,
+  "error": "Stock insuficiente para 'Refrigeradora LG'. Disponible: 5, Solicitado: 10"
+}
+```
+
+### Response - Error (401) - Sin autenticación
+
+```json
+{
+  "ok": false,
+  "error": "Se requiere Authorization header"
+}
+```
+
+### Response - Error (500)
+
+```json
+{
+  "ok": false,
+  "error": "Error al procesar la solicitud: [detalle del error]"
+}
+```
+
+### Diferencias con Checkout Web
+
+| Característica   | Checkout Web (`/checkout/create/`) | Payment Intent (`/create-payment/`) |
+| ---------------- | ---------------------------------- | ----------------------------------- |
+| **Uso**          | Redirecciona a Stripe Checkout     | Pago nativo en la app               |
+| **Body**         | `{"items": [...]}`                 | `[...]` (array directo)             |
+| **Response**     | URL de checkout                    | `clientSecret`                      |
+| **Confirmación** | Automática por Stripe              | Manejada por la app                 |
+| **UI**           | Stripe hosted page                 | UI personalizada en tu app          |
+
+---
+
+## 3. ✅ Verificar Sesión de Pago
 
 Verifica el estado de una sesión de Stripe después de que el usuario complete (o cancele) el pago.
 
@@ -208,9 +318,16 @@ Content-Type: application/json
 
 **Eventos manejados:**
 
-- `checkout.session.completed` → Confirma el pago y reduce stock
+- `checkout.session.completed` → Confirma el pago (checkout web) y reduce stock
+- `payment_intent.created` → Registra la creación de un payment intent (apps móviles)
+- `payment_intent.succeeded` → Confirma el pago (apps móviles) y reduce stock
 - `payment_intent.payment_failed` → Marca la venta como fallida
 - `charge.refunded` → Procesa el reembolso y restaura stock
+
+**Notificaciones push:** Se envían automáticamente al usuario cuando:
+
+- ✅ Pago confirmado (`payment_intent.succeeded`)
+- ❌ Pago fallido (`payment_intent.payment_failed`)
 
 ---
 
@@ -457,11 +574,13 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 ---
 
-## 🔄 Flujo Completo de Compra
+## 🔄 Flujos de Compra
+
+### Flujo Web (Checkout)
 
 ```mermaid
 sequenceDiagram
-    participant F as Frontend
+    participant F as Frontend Web
     participant B as Backend
     participant S as Stripe
     participant W as Webhook
@@ -480,6 +599,33 @@ sequenceDiagram
     S->>F: Redirige a success_url?session_id=...
     F->>B: GET /checkout/verify/{session_id}/
     B-->>F: {estado: "pagada", total: ...}
+```
+
+### Flujo Móvil (Payment Intent)
+
+```mermaid
+sequenceDiagram
+    participant A as App Móvil
+    participant B as Backend
+    participant S as Stripe SDK
+    participant W as Webhook
+
+    A->>B: POST /sales/create-payment/
+    B->>B: Crea NotaVenta (pendiente)
+    B->>S: Crear Payment Intent
+    S-->>B: clientSecret + payment_intent_id
+    B-->>A: {clientSecret, nota_venta_id, total}
+    A->>S: initPaymentSheet(clientSecret)
+    A->>S: presentPaymentSheet()
+    Note over A,S: Usuario ingresa datos de tarjeta
+    S->>W: payment_intent.succeeded
+    W->>B: Confirmar pago
+    B->>B: Estado = "pagada", reduce stock
+    B->>A: Enviar notificación push
+    W-->>S: 200 OK
+    S-->>A: Payment Success
+    A->>B: GET /mis-compras/{nota_venta_id}/
+    B-->>A: {estado: "pagada", detalles: ...}
 ```
 
 ---
@@ -507,6 +653,18 @@ Para probar en modo test:
 | ❌ Pago rechazado         | `4000 0000 0000 9995` | 123 | 12/30 |
 
 ---
+
+## 🔗 Endpoints Disponibles
+
+| Endpoint                               | Método | Uso                              | Autenticación |
+| -------------------------------------- | ------ | -------------------------------- | ------------- |
+| `/sales/checkout/create/`              | POST   | Checkout web con Stripe          | ✅ JWT        |
+| `/sales/create-payment/`               | POST   | Payment Intent para apps móviles | ✅ JWT        |
+| `/sales/checkout/verify/{session_id}/` | GET    | Verificar estado de checkout web | ✅ JWT        |
+| `/sales/webhook/stripe/`               | POST   | Webhook de Stripe                | ❌ Sin auth   |
+| `/sales/mis-compras/`                  | GET    | Listar compras del usuario       | ✅ JWT        |
+| `/sales/mis-compras/{id}/`             | GET    | Detalle de compra específica     | ✅ JWT        |
+| `/sales/reembolso/{id}/`               | POST   | Solicitar reembolso              | ✅ JWT        |
 
 ## 🔗 URLs Base
 
@@ -539,6 +697,10 @@ https://parcial2backend.onrender.com/sales/
 4. **Stock:** Se reduce automáticamente al confirmar pago, se restaura al reembolsar
 
 5. **Moneda:** Actualmente configurado en USD. Cambiar a BOB si es necesario
+
+6. **Apps Móviles:** Para Flutter, usa el paquete `flutter_stripe` con el `clientSecret` del endpoint `/create-payment/`
+
+7. **Notificaciones Push:** Se envían automáticamente al confirmar pagos y en caso de fallo (requiere FCM token registrado)
 
 ---
 

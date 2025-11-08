@@ -176,3 +176,29 @@ def cancelar_payment_intent(payment_intent_id):
         return stripe.PaymentIntent.cancel(payment_intent_id)
     except Exception as e:
         raise Exception(f"Error al cancelar payment intent: {str(e)}")
+
+
+def crear_payment_intent(amount, currency='usd', metadata=None):
+    """
+    Crea un Payment Intent para apps móviles (Flutter, React Native, etc.)
+    
+    Args:
+        amount: Monto en centavos (ej: 29998 para $299.98)
+        currency: Moneda (default: 'usd')
+        metadata: Datos adicionales (ej: nota_venta_id, usuario_id)
+    
+    Returns:
+        PaymentIntent object con client_secret
+    """
+    try:
+        payment_intent = stripe.PaymentIntent.create(
+            amount=amount,
+            currency=currency,
+            metadata=metadata or {},
+            automatic_payment_methods={
+                'enabled': True,
+            },
+        )
+        return payment_intent
+    except Exception as e:
+        raise Exception(f"Error al crear payment intent: {str(e)}")

@@ -9,6 +9,9 @@ urlpatterns = [
     path('checkout/create/', views.crear_checkout, name='crear_checkout'),
     path('checkout/verify/<str:session_id>/', views.verificar_session, name='verificar_session'),
     
+    # Payment Intent para apps móviles (Flutter, React Native)
+    path('create-payment/', views.crear_payment_intent, name='crear_payment_intent'),
+    
     # Webhook de Stripe (NO requiere autenticación)
     path('webhook/stripe/', views.webhook_stripe, name='webhook_stripe'),
     

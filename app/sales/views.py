@@ -186,19 +186,91 @@ def webhook_stripe(request):
             else:
                 logger.warning(f"⚠️ No se encontró nota_venta_id en metadata del checkout")
         
+        # Manejar evento: Payment Intent creado (para apps móviles)
+        elif event['type'] == 'payment_intent.created':
+            payment_intent = event['data']['object']
+            payment_intent_id = payment_intent['id']
+            nota_venta_id = payment_intent['metadata'].get('nota_venta_id')
+            
+            logger.info(f"💳 PAYMENT INTENT CREADO")
+            logger.info(f"   - Payment Intent ID: {payment_intent_id}")
+            logger.info(f"   - Nota Venta ID: {nota_venta_id}")
+            logger.info(f"   - Amount: {payment_intent.get('amount', 0) / 100}")
+            logger.info(f"   - Status: {payment_intent.get('status', 'N/A')}")
+        
+        # Manejar evento: Payment Intent exitoso (para apps móviles)
+        elif event['type'] == 'payment_intent.succeeded':
+            payment_intent = event['data']['object']
+            payment_intent_id = payment_intent['id']
+            nota_venta_id = payment_intent['metadata'].get('nota_venta_id')
+            
+            logger.info(f"✅ PAYMENT INTENT EXITOSO")
+            logger.info(f"   - Payment Intent ID: {payment_intent_id}")
+            logger.info(f"   - Nota Venta ID: {nota_venta_id}")
+            logger.info(f"   - Amount: {payment_intent.get('amount', 0) / 100}")
+            
+            if nota_venta_id:
+                try:
+                    logger.info(f"🔄 Confirmando pago para NotaVenta #{nota_venta_id}...")
+                    
+                    service_sale.confirmar_pago(
+                        nota_venta_id=int(nota_venta_id),
+                        stripe_session_id=None,  # No hay session en payment intents directos
+                        stripe_payment_intent=payment_intent_id
+                    )
+                    
+                    # Enviar notificación al usuario
+                    nota_venta = NotaVenta.objects.get(id=nota_venta_id)
+                    fcm_service.enviar_notificacion_fcm(
+                        idUsuario=nota_venta.usuario_id,
+                        titulo="¡Pago Exitoso! 🎉",
+                        mensaje=f"Tu pago de ${nota_venta.total} ha sido procesado correctamente.",
+                        data={
+                            "tipo": "pago_confirmado",
+                            "nota_venta_id": str(nota_venta_id),
+                            "payment_intent_id": payment_intent_id
+                        }
+                    )
+                    
+                    logger.info(f"✅ Pago confirmado y notificación enviada: NotaVenta #{nota_venta_id}")
+                    
+                except NotaVenta.DoesNotExist:
+                    logger.error(f"❌ NotaVenta #{nota_venta_id} NO ENCONTRADA")
+                except Exception as e:
+                    logger.error(f"❌ Error al confirmar pago: {str(e)}")
+                    import traceback
+                    logger.error(traceback.format_exc())
+            else:
+                logger.warning(f"⚠️ No se encontró nota_venta_id en metadata del payment intent")
+        
         # Manejar evento: Pago fallido
         elif event['type'] == 'payment_intent.payment_failed':
             payment_intent = event['data']['object']
             payment_intent_id = payment_intent['id']
+            
+            logger.error(f"❌ PAYMENT INTENT FALLIDO")
+            logger.error(f"   - Payment Intent ID: {payment_intent_id}")
             
             try:
                 nota_venta = NotaVenta.objects.get(
                     stripe_payment_intent=payment_intent_id
                 )
                 service_sale.marcar_pago_fallido(nota_venta.id)
-                logger.warning(f"Pago fallido: NotaVenta #{nota_venta.id}")
+                
+                # Enviar notificación de pago fallido
+                fcm_service.enviar_notificacion_fcm(
+                    idUsuario=nota_venta.usuario_id,
+                    titulo="Pago Fallido",
+                    mensaje=f"Hubo un problema procesando tu pago. Por favor, intenta nuevamente.",
+                    data={
+                        "tipo": "pago_fallido",
+                        "nota_venta_id": str(nota_venta.id)
+                    }
+                )
+                
+                logger.warning(f"⚠️ Pago fallido marcado: NotaVenta #{nota_venta.id}")
             except NotaVenta.DoesNotExist:
-                logger.warning(f"NotaVenta no encontrada para payment_intent {payment_intent_id}")
+                logger.warning(f"⚠️ NotaVenta no encontrada para payment_intent {payment_intent_id}")
         
         # Manejar evento: Reembolso
         elif event['type'] == 'charge.refunded':
@@ -481,4 +553,98 @@ def verificar_session(request, session_id):
         return JsonResponse({
             'ok': False,
             'error': f'Error al verificar sesión: {str(e)}'
+        }, status=500)
+
+
+@csrf_exempt
+@jwt_required
+@require_http_methods(["POST"])
+def crear_payment_intent(request):
+    """
+    Crea un Payment Intent para apps móviles (Flutter, React Native, etc.)
+    Este endpoint es específico para pagos nativos en aplicaciones móviles.
+    
+    Body esperado:
+    [
+        {"producto_id": 1, "cantidad": 2},
+        {"producto_id": 3, "cantidad": 1}
+    ]
+    
+    Response:
+    {
+        "ok": true,
+        "clientSecret": "pi_3ABC123..._secret_xyz789",
+        "nota_venta_id": 15,
+        "total": 299.98,
+        "payment_intent_id": "pi_3ABC123..."
+    }
+    """
+    try:
+        # Parsear body como array
+        items_data = json.loads(request.body)
+        
+        if not isinstance(items_data, list) or not items_data:
+            return JsonResponse({
+                'ok': False,
+                'error': 'Se requiere una lista con al menos un item: [{"producto_id": int, "cantidad": int}]'
+            }, status=400)
+        
+        # Validar disponibilidad de productos y calcular total
+        items_validados = service_sale.validar_items_disponibles(items_data)
+        total_decimal = service_sale.calcular_total_items(items_validados)
+        
+        # Convertir total a centavos para Stripe
+        total_centavos = int(float(total_decimal) * 100)
+        
+        logger.info(f"💰 Creando Payment Intent para usuario {request.usuario.id}")
+        logger.info(f"   Total: ${total_decimal} ({total_centavos} centavos)")
+        logger.info(f"   Items: {len(items_data)}")
+        
+        # Crear nota de venta en estado pendiente
+        nota_venta = service_sale.crear_nota_venta(
+            usuario_id=request.usuario.id,
+            items=items_data,
+            metodo_pago_nombre='Tarjeta'
+        )
+        
+        logger.info(f"📝 NotaVenta #{nota_venta.id} creada - Estado: {nota_venta.estado}")
+        
+        # Crear Payment Intent en Stripe
+        payment_intent = service_stripe.crear_payment_intent(
+            amount=total_centavos,
+            currency='usd',
+            metadata={
+                'nota_venta_id': str(nota_venta.id),
+                'usuario_id': str(request.usuario.id),
+                'usuario_email': request.usuario.correo
+            }
+        )
+        
+        # Guardar el payment_intent_id en la nota de venta
+        nota_venta.stripe_payment_intent = payment_intent.id
+        nota_venta.save()
+        
+        logger.info(f"✅ Payment Intent creado: {payment_intent.id}")
+        logger.info(f"   Client Secret: {payment_intent.client_secret[:20]}...")
+        logger.info(f"   Status: {payment_intent.status}")
+        
+        return JsonResponse({
+            'ok': True,
+            'clientSecret': payment_intent.client_secret,
+            'nota_venta_id': nota_venta.id,
+            'total': float(total_decimal),
+            'payment_intent_id': payment_intent.id
+        })
+        
+    except ValueError as e:
+        logger.warning(f"⚠️ Error de validación: {str(e)}")
+        return JsonResponse({
+            'ok': False,
+            'error': str(e)
+        }, status=400)
+    except Exception as e:
+        logger.error(f"❌ Error al crear payment intent: {str(e)}")
+        return JsonResponse({
+            'ok': False,
+            'error': f'Error al procesar la solicitud: {str(e)}'
         }, status=500)
