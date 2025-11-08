@@ -50,8 +50,8 @@ def crear_checkout_session(items, usuario_email, metadata=None):
         
         # Obtener el primer origen CORS permitido para las URLs de redirección
         cors_origins = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000')
-        success_url = f"{cors_origins.split(',')[0]}/checkout/success?session_id={{CHECKOUT_SESSION_ID}}"
-        cancel_url = f"{cors_origins.split(',')[0]}/checkout/cancel"
+        success_url = f"{cors_origins.split(',')[0]}/tienda/checkout/success?session_id={{CHECKOUT_SESSION_ID}}"
+        cancel_url = f"{cors_origins.split(',')[0]}/tienda/checkout/cancel"
         
         # Crear la sesión de checkout
         session = stripe.checkout.Session.create(
