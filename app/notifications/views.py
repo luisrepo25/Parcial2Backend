@@ -5,6 +5,7 @@ import json
 from users.models import Usuario
 from users.services.jwt import jwt_required
 from .services import fcm_service
+from bitacora import service_bitacora
 import logging
 
 logger = logging.getLogger(__name__)
@@ -272,12 +273,27 @@ def enviar_notificacion_usuario(request):
         
         if resultado['success']:
             logger.info(f"📤 Notificación enviada a {destinatario.correo}")
+            
+            # Registrar en bitácora
+            service_bitacora.registrar_accion(
+                accion="ENVIAR_NOTIFICACION",
+                usuario=request.usuario.correo if hasattr(request, 'usuario') else None,
+                detalles=f"Notificación enviada a {destinatario.correo} - Título: {titulo}",
+                resultado="EXITOSO"
+            )
+            
             return JsonResponse({
                 'ok': True,
                 'mensaje': 'Notificación enviada exitosamente',
                 'destinatario': destinatario.correo
             })
         else:
+            service_bitacora.registrar_accion(
+                accion="ENVIAR_NOTIFICACION",
+                usuario=request.usuario.correo if hasattr(request, 'usuario') else None,
+                detalles=f"Error al enviar notificación a {destinatario.correo}: {resultado.get('error')}",
+                resultado="FALLIDO"
+            )
             return JsonResponse({
                 'ok': False,
                 'error': resultado.get('error', 'Error al enviar notificación')
@@ -354,6 +370,14 @@ def enviar_notificacion_masiva(request):
         )
         
         if resultado['success']:
+            # Registrar en bitácora
+            service_bitacora.registrar_accion(
+                accion="ENVIAR_NOTIFICACION_MASIVA",
+                usuario=request.usuario.correo if hasattr(request, 'usuario') else None,
+                detalles=f"Notificación masiva enviada - Título: {titulo} - Enviadas: {resultado['success_count']}/{len(tokens)}",
+                resultado="EXITOSO"
+            )
+            
             return JsonResponse({
                 'ok': True,
                 'mensaje': 'Notificación masiva enviada',
@@ -362,6 +386,12 @@ def enviar_notificacion_masiva(request):
                 'total_usuarios': len(tokens)
             })
         else:
+            service_bitacora.registrar_accion(
+                accion="ENVIAR_NOTIFICACION_MASIVA",
+                usuario=request.usuario.correo if hasattr(request, 'usuario') else None,
+                detalles=f"Error al enviar notificación masiva: {resultado.get('error')}",
+                resultado="FALLIDO"
+            )
             return JsonResponse({
                 'ok': False,
                 'error': resultado.get('error', 'Error al enviar notificaciones')
@@ -424,11 +454,26 @@ def enviar_notificacion_por_tema(request):
         
         if resultado['success']:
             logger.info(f"📤 Notificación enviada al tema '{tema}'")
+            
+            # Registrar en bitácora
+            service_bitacora.registrar_accion(
+                accion="ENVIAR_NOTIFICACION_POR_TEMA",
+                usuario=request.usuario.correo if hasattr(request, 'usuario') else None,
+                detalles=f"Notificación enviada al tema '{tema}' - Título: {titulo}",
+                resultado="EXITOSO"
+            )
+            
             return JsonResponse({
                 'ok': True,
                 'mensaje': f"Notificación enviada al tema '{tema}'"
             })
         else:
+            service_bitacora.registrar_accion(
+                accion="ENVIAR_NOTIFICACION_POR_TEMA",
+                usuario=request.usuario.correo if hasattr(request, 'usuario') else None,
+                detalles=f"Error al enviar notificación al tema '{tema}': {resultado.get('error')}",
+                resultado="FALLIDO"
+            )
             return JsonResponse({
                 'ok': False,
                 'error': resultado.get('error', 'Error al enviar notificación')
@@ -525,4 +570,101 @@ def marcar_notificacion_leida(request, notificacion_id):
         return JsonResponse({
             'ok': False,
             'error': str(e)
+        }, status=500)
+
+
+@csrf_exempt
+@jwt_required
+@require_http_methods(["GET"])
+def listar_notificaciones(request):
+    """
+    Lista todas las notificaciones del sistema con paginación
+    
+    Query params:
+    - page: Número de página (default: 1)
+    - page_size: Tamaño de página (default: 10, max: 100)
+    
+    Response:
+    {
+        "ok": true,
+        "notificaciones": [...],
+        "pagination": {...}
+    }
+    """
+    try:
+        # Obtener parámetros de paginación
+        page = int(request.GET.get('page', 1))
+        page_size = int(request.GET.get('page_size', 10))
+        
+        # Llamar al servicio
+        resultado = fcm_service.listar_todas_notificaciones(
+            page=page,
+            page_size=page_size
+        )
+        
+        if 'error' in resultado:
+            return JsonResponse({
+                'ok': False,
+                'error': resultado['error']
+            }, status=500)
+        
+        logger.info(f"📋 Listando notificaciones - Página {resultado['pagination']['page']}/{resultado['pagination']['total_pages']}")
+        
+        return JsonResponse({
+            'ok': True,
+            **resultado
+        })
+        
+    except ValueError as e:
+        return JsonResponse({
+            'ok': False,
+            'error': f'Parámetros inválidos: {str(e)}'
+        }, status=400)
+    except Exception as e:
+        logger.error(f"❌ Error al listar notificaciones: {str(e)}")
+        return JsonResponse({
+            'ok': False,
+            'error': f'Error al obtener notificaciones: {str(e)}'
+        }, status=500)
+
+
+@csrf_exempt
+@jwt_required
+@require_http_methods(["GET"])
+def detalle_notificacion(request, notificacion_id):
+    """
+    Obtiene el detalle de una notificación y todos los usuarios
+    que la recibieron con su estado de lectura
+    
+    Response:
+    {
+        "ok": true,
+        "notificacion": {...},
+        "estadisticas": {...},
+        "destinatarios": [...]
+    }
+    """
+    try:
+        from notifications.models import Notificacion
+        
+        # Llamar al servicio
+        resultado = fcm_service.obtener_destinatarios_notificacion(notificacion_id)
+        
+        logger.info(f"🔍 Detalle de notificación #{notificacion_id} obtenido")
+        
+        return JsonResponse({
+            'ok': True,
+            **resultado
+        })
+        
+    except Notificacion.DoesNotExist:
+        return JsonResponse({
+            'ok': False,
+            'error': f'Notificación #{notificacion_id} no encontrada'
+        }, status=404)
+    except Exception as e:
+        logger.error(f"❌ Error al obtener detalle de notificación: {str(e)}")
+        return JsonResponse({
+            'ok': False,
+            'error': f'Error al obtener detalle: {str(e)}'
         }, status=500)

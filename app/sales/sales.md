@@ -497,7 +497,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
           "categoria": "Refrigeración",
           "marca": "LG",
           "garantia": {
-            "cobertura": 24
+            "cobertura_meses": 24,
+            "marca": "LG"
           }
         },
         "cantidad": 2,
@@ -597,6 +598,186 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 ---
 
+## 7. 📋 Listar Todas las Ventas (con Paginación)
+
+Obtiene todas las notas de venta del sistema con paginación y filtros opcionales.
+
+### Endpoint
+
+```
+GET /sales/ventas/
+```
+
+### Query Parameters (opcionales)
+
+```
+?page=1&page_size=10&estado=pagada&usuario_id=5
+```
+
+**Parámetros:**
+
+- `page`: Número de página (default: 1)
+- `page_size`: Tamaño de página (default: 10, max: 100)
+- `estado`: Filtrar por estado (`pendiente`, `pagada`, `fallida`, `cancelada`, `reembolsada`)
+- `usuario_id`: Filtrar por ID de usuario
+
+### Headers
+
+```http
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+### Response - Éxito (200)
+
+```json
+{
+  "ok": true,
+  "ventas": [
+    {
+      "id": 15,
+      "usuario": {
+        "id": 5,
+        "nombre": "Juan Pérez",
+        "correo": "juan@example.com"
+      },
+      "estado": "pagada",
+      "metodo_pago": "Tarjeta",
+      "total": 299.98,
+      "created_at": "2025-11-08T18:30:00.123456",
+      "updated_at": "2025-11-08T18:31:15.654321",
+      "cantidad_items": 3
+    },
+    {
+      "id": 14,
+      "usuario": {
+        "id": 3,
+        "nombre": "María López",
+        "correo": "maria@example.com"
+      },
+      "estado": "pendiente",
+      "metodo_pago": "Tarjeta",
+      "total": 149.99,
+      "created_at": "2025-11-07T14:20:00.123456",
+      "updated_at": "2025-11-07T14:20:00.123456",
+      "cantidad_items": 1
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "page_size": 10,
+    "total_items": 150,
+    "total_pages": 15,
+    "has_next": true,
+    "has_previous": false
+  }
+}
+```
+
+### Response - Error (400)
+
+```json
+{
+  "ok": false,
+  "error": "Parámetros inválidos: invalid literal for int() with base 10: 'abc'"
+}
+```
+
+### Response - Error (401)
+
+```json
+{
+  "ok": false,
+  "error": "Se requiere Authorization header"
+}
+```
+
+---
+
+## 8. 🔍 Detalle de Venta
+
+Obtiene el detalle completo de una nota de venta específica, incluyendo todos los productos con cantidades y subtotales.
+
+### Endpoint
+
+```
+GET /sales/ventas/{venta_id}/
+```
+
+### Ejemplo
+
+```
+GET /sales/ventas/15/
+```
+
+### Headers
+
+```http
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+### Response - Éxito (200)
+
+```json
+{
+  "ok": true,
+  "venta": {
+    "id": 15,
+    "usuario": {
+      "id": 5,
+      "nombre": "Juan Pérez",
+      "correo": "juan@example.com"
+    },
+    "estado": "pagada",
+    "metodo_pago": {
+      "nombre": "Tarjeta",
+      "descripcion": "Pago con tarjeta de crédito/débito a través de Stripe"
+    },
+    "total": 299.98,
+    "stripe_session_id": "cs_test_a1B2c3D4e5F6g7H8i9J0",
+    "stripe_payment_intent": "pi_1ABC2DEF3GHI4JKL",
+    "created_at": "2025-11-08T18:30:00.123456",
+    "updated_at": "2025-11-08T18:31:15.654321",
+    "productos": [
+      {
+        "producto_id": 1,
+        "nombre": "Refrigeradora LG 420L",
+        "descripcion": "Refrigeradora de dos puertas con tecnología Inverter",
+        "imagen_url": "https://res.cloudinary.com/...",
+        "categoria": "Refrigeración",
+        "marca": "LG",
+        "cantidad": 2,
+        "precio_unitario": 149.99,
+        "subtotal": 299.98,
+        "garantia": {
+          "cobertura_meses": 24,
+          "marca": "LG"
+        }
+      }
+    ]
+  }
+}
+```
+
+### Response - Error (404)
+
+```json
+{
+  "ok": false,
+  "error": "Nota de venta #999 no encontrada"
+}
+```
+
+### Response - Error (401)
+
+```json
+{
+  "ok": false,
+  "error": "Se requiere Authorization header"
+}
+```
+
+---
+
 ## 🔄 Flujos de Compra
 
 ### Flujo Web (Checkout)
@@ -679,15 +860,17 @@ Para probar en modo test:
 
 ## 🔗 Endpoints Disponibles
 
-| Endpoint                               | Método | Uso                              | Autenticación |
-| -------------------------------------- | ------ | -------------------------------- | ------------- |
-| `/sales/checkout/create/`              | POST   | Checkout web con Stripe          | ✅ JWT        |
-| `/sales/create-payment/`               | POST   | Payment Intent para apps móviles | ✅ JWT        |
-| `/sales/checkout/verify/{session_id}/` | GET    | Verificar estado de checkout web | ✅ JWT        |
-| `/sales/webhook/stripe/`               | POST   | Webhook de Stripe                | ❌ Sin auth   |
-| `/sales/mis-compras/`                  | GET    | Listar compras del usuario       | ✅ JWT        |
-| `/sales/mis-compras/{id}/`             | GET    | Detalle de compra específica     | ✅ JWT        |
-| `/sales/reembolso/{id}/`               | POST   | Solicitar reembolso              | ✅ JWT        |
+| Endpoint                               | Método | Uso                                | Autenticación |
+| -------------------------------------- | ------ | ---------------------------------- | ------------- |
+| `/sales/checkout/create/`              | POST   | Checkout web con Stripe            | ✅ JWT        |
+| `/sales/create-payment/`               | POST   | Payment Intent para apps móviles   | ✅ JWT        |
+| `/sales/checkout/verify/{session_id}/` | GET    | Verificar estado de checkout web   | ✅ JWT        |
+| `/sales/webhook/stripe/`               | POST   | Webhook de Stripe                  | ❌ Sin auth   |
+| `/sales/mis-compras/`                  | GET    | Listar compras del usuario         | ✅ JWT        |
+| `/sales/mis-compras/{id}/`             | GET    | Detalle de compra específica       | ✅ JWT        |
+| `/sales/reembolso/{id}/`               | POST   | Solicitar reembolso                | ✅ JWT        |
+| `/sales/ventas/`                       | GET    | Listar todas las ventas (paginado) | ✅ JWT        |
+| `/sales/ventas/{id}/`                  | GET    | Detalle completo de venta          | ✅ JWT        |
 
 ## 🔗 URLs Base
 

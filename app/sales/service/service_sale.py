@@ -349,3 +349,153 @@ def obtener_estadisticas_ventas_usuario(usuario_id):
             total=Sum('total')
         )['total'] or 0,
     }
+
+
+def listar_todas_ventas(page=1, page_size=10, estado=None, usuario_id=None):
+    """
+    Lista todas las notas de venta con paginación
+    
+    Args:
+        page: Número de página (default: 1)
+        page_size: Tamaño de página (default: 10, max: 100)
+        estado: Filtrar por estado (opcional)
+        usuario_id: Filtrar por usuario (opcional)
+    
+    Returns:
+        Dict con ventas paginadas y metadata de paginación
+    """
+    from django.core.paginator import Paginator, EmptyPage
+    
+    # Limitar page_size a máximo 100
+    page_size = min(page_size, 100)
+    
+    # Construir query
+    query = NotaVenta.objects.select_related(
+        'usuario', 
+        'metodo_pago'
+    ).prefetch_related(
+        'detalles__producto'
+    )
+    
+    # Aplicar filtros
+    if estado:
+        query = query.filter(estado=estado)
+    
+    if usuario_id:
+        query = query.filter(usuario_id=usuario_id)
+    
+    # Aplicar paginación
+    paginator = Paginator(query, page_size)
+    
+    try:
+        ventas_page = paginator.page(page)
+    except EmptyPage:
+        ventas_page = paginator.page(paginator.num_pages)
+    
+    # Serializar ventas
+    ventas_data = []
+    for venta in ventas_page:
+        # Intentar obtener nombre del cliente
+        try:
+            cliente = venta.usuario.cliente
+            nombre_completo = f"{cliente.nombres} {cliente.apellidoPaterno}"
+        except:
+            nombre_completo = "Usuario sin nombre"
+        
+        ventas_data.append({
+            'id': venta.id,
+            'usuario': {
+                'id': venta.usuario.id,
+                'nombre': nombre_completo,
+                'correo': venta.usuario.correo
+            },
+            'estado': venta.estado,
+            'metodo_pago': venta.metodo_pago.nombre,
+            'total': float(venta.total),
+            'created_at': venta.created_at.isoformat(),
+            'updated_at': venta.updated_at.isoformat(),
+            'cantidad_items': venta.detalles.count()
+        })
+    
+    return {
+        'ventas': ventas_data,
+        'pagination': {
+            'page': ventas_page.number,
+            'page_size': page_size,
+            'total_items': paginator.count,
+            'total_pages': paginator.num_pages,
+            'has_next': ventas_page.has_next(),
+            'has_previous': ventas_page.has_previous()
+        }
+    }
+
+
+def obtener_detalle_venta_completo(nota_venta_id):
+    """
+    Obtiene el detalle completo de una nota de venta
+    incluyendo todos los productos con sus cantidades y subtotales
+    
+    Args:
+        nota_venta_id: ID de la nota de venta
+    
+    Returns:
+        Dict con toda la información de la venta
+    
+    Raises:
+        NotaVenta.DoesNotExist: Si la venta no existe
+    """
+    # Obtener nota de venta con todas las relaciones
+    venta = NotaVenta.objects.select_related(
+        'usuario',
+        'metodo_pago'
+    ).prefetch_related(
+        'detalles__producto__categoria',
+        'detalles__producto__marca',
+        'detalles__producto__garantia'
+    ).get(id=nota_venta_id)
+    
+    # Intentar obtener nombre del cliente
+    try:
+        cliente = venta.usuario.cliente
+        nombre_completo = f"{cliente.nombres} {cliente.apellidoPaterno}"
+    except:
+        nombre_completo = "Usuario sin nombre"
+    
+    # Serializar productos
+    productos = []
+    for detalle in venta.detalles.all():
+        productos.append({
+            'producto_id': detalle.producto.id,
+            'nombre': detalle.producto.nombre,
+            'descripcion': detalle.producto.descripcion,
+            'imagen_url': detalle.producto.imagen_url,
+            'categoria': detalle.producto.categoria.nombre,
+            'marca': detalle.producto.marca.nombre,
+            'cantidad': detalle.cantidad,
+            'precio_unitario': float(detalle.precio_unitario),
+            'subtotal': float(detalle.subtotal),
+            'garantia': {
+                'cobertura_meses': detalle.producto.garantia.cobertura,
+                'marca': detalle.producto.garantia.Marca.nombre
+            } if detalle.producto.garantia else None
+        })
+    
+    return {
+        'id': venta.id,
+        'usuario': {
+            'id': venta.usuario.id,
+            'nombre': nombre_completo,
+            'correo': venta.usuario.correo
+        },
+        'estado': venta.estado,
+        'metodo_pago': {
+            'nombre': venta.metodo_pago.nombre,
+            'descripcion': venta.metodo_pago.descripcion
+        },
+        'total': float(venta.total),
+        'stripe_session_id': venta.stripe_session_id,
+        'stripe_payment_intent': venta.stripe_payment_intent,
+        'created_at': venta.created_at.isoformat(),
+        'updated_at': venta.updated_at.isoformat(),
+        'productos': productos
+    }

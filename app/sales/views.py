@@ -13,6 +13,7 @@ from sales.service import service_stripe, service_sale
 from users.services.jwt import jwt_required
 from sales.models import NotaVenta
 from notifications.services import fcm_service
+from bitacora import service_bitacora
 
 # Configurar logging
 logger = logging.getLogger(__name__)
@@ -86,6 +87,14 @@ def crear_checkout(request):
         
         logger.info(f"Checkout creado: NotaVenta #{nota_venta.id}, Session {session.id}")
         
+        # Registrar en bitácora
+        service_bitacora.registrar_accion(
+            accion="CREAR_CHECKOUT",
+            usuario=request.usuario.correo,
+            detalles=f"Checkout creado - NotaVenta #{nota_venta.id} - Total: ${nota_venta.total} - Items: {len(items_data)}",
+            resultado="EXITOSO"
+        )
+        
         return JsonResponse({
             'ok': True,
             'session_id': session.id,
@@ -96,6 +105,12 @@ def crear_checkout(request):
         
     except ValueError as e:
         logger.warning(f"Error de validación en checkout: {str(e)}")
+        service_bitacora.registrar_accion(
+            accion="CREAR_CHECKOUT",
+            usuario=request.usuario.correo if hasattr(request, 'usuario') else None,
+            detalles=f"Error al crear checkout: {str(e)}",
+            resultado="FALLIDO"
+        )
         return JsonResponse({
             'ok': False,
             'error': str(e)
@@ -171,7 +186,14 @@ def webhook_stripe(request):
                             "nota_venta_id": str(nota_venta_id)
                         }
                     )
-
+                    
+                    # Registrar en bitácora
+                    service_bitacora.registrar_accion(
+                        accion="PAGO_CONFIRMADO",
+                        usuario=nota_venta.usuario.correo,
+                        detalles=f"Pago confirmado - NotaVenta #{nota_venta_id} - Total: ${nota_venta.total} - Payment Intent: {payment_intent}",
+                        resultado="EXITOSO"
+                    )
 
                     logger.info(f"✅ PAGO CONFIRMADO EXITOSAMENTE: NotaVenta #{nota_venta_id}")
                     logger.info("=" * 80)
@@ -223,13 +245,21 @@ def webhook_stripe(request):
                     nota_venta = NotaVenta.objects.get(id=nota_venta_id)
                     fcm_service.enviar_notificacion_fcm(
                         idUsuario=nota_venta.usuario_id,
-                        titulo="¡Pago Exitoso! 🎉",
+                        titulo="¡Pago Exitoso!",
                         mensaje=f"Tu pago de ${nota_venta.total} ha sido procesado correctamente.",
                         data={
                             "tipo": "pago_confirmado",
                             "nota_venta_id": str(nota_venta_id),
                             "payment_intent_id": payment_intent_id
                         }
+                    )
+                    
+                    # Registrar en bitácora
+                    service_bitacora.registrar_accion(
+                        accion="PAGO_CONFIRMADO",
+                        usuario=nota_venta.usuario.correo,
+                        detalles=f"Pago confirmado (Payment Intent) - NotaVenta #{nota_venta_id} - Total: ${nota_venta.total}",
+                        resultado="EXITOSO"
                     )
                     
                     logger.info(f"✅ Pago confirmado y notificación enviada: NotaVenta #{nota_venta_id}")
@@ -266,6 +296,14 @@ def webhook_stripe(request):
                         "tipo": "pago_fallido",
                         "nota_venta_id": str(nota_venta.id)
                     }
+                )
+                
+                # Registrar en bitácora
+                service_bitacora.registrar_accion(
+                    accion="PAGO_FALLIDO",
+                    usuario=nota_venta.usuario.correo,
+                    detalles=f"Pago fallido - NotaVenta #{nota_venta.id} - Payment Intent: {payment_intent_id}",
+                    resultado="FALLIDO"
                 )
                 
                 logger.warning(f"⚠️ Pago fallido marcado: NotaVenta #{nota_venta.id}")
@@ -631,6 +669,14 @@ def crear_payment_intent(request):
         logger.info(f"   Client Secret: {payment_intent.client_secret[:20]}...")
         logger.info(f"   Status: {payment_intent.status}")
         
+        # Registrar en bitácora
+        service_bitacora.registrar_accion(
+            accion="CREAR_PAYMENT_INTENT",
+            usuario=request.usuario.correo,
+            detalles=f"Payment Intent creado - NotaVenta #{nota_venta.id} - Total: ${total_decimal} - Items: {len(items_data)}",
+            resultado="EXITOSO"
+        )
+        
         return JsonResponse({
             'ok': True,
             'clientSecret': payment_intent.client_secret,
@@ -641,6 +687,12 @@ def crear_payment_intent(request):
         
     except ValueError as e:
         logger.warning(f"⚠️ Error de validación: {str(e)}")
+        service_bitacora.registrar_accion(
+            accion="CREAR_PAYMENT_INTENT",
+            usuario=request.usuario.correo if hasattr(request, 'usuario') else None,
+            detalles=f"Error al crear payment intent: {str(e)}",
+            resultado="FALLIDO"
+        )
         return JsonResponse({
             'ok': False,
             'error': str(e)
@@ -650,4 +702,97 @@ def crear_payment_intent(request):
         return JsonResponse({
             'ok': False,
             'error': f'Error al procesar la solicitud: {str(e)}'
+        }, status=500)
+
+
+@csrf_exempt
+@jwt_required
+@require_http_methods(["GET"])
+def listar_ventas(request):
+    """
+    Lista todas las notas de venta con paginación
+    
+    Query params:
+    - page: Número de página (default: 1)
+    - page_size: Tamaño de página (default: 10, max: 100)
+    - estado: Filtrar por estado (opcional)
+    - usuario_id: Filtrar por usuario (opcional)
+    
+    Response:
+    {
+        "ok": true,
+        "ventas": [...],
+        "pagination": {...}
+    }
+    """
+    try:
+        # Obtener parámetros de paginación
+        page = int(request.GET.get('page', 1))
+        page_size = int(request.GET.get('page_size', 10))
+        estado = request.GET.get('estado', None)
+        usuario_id = request.GET.get('usuario_id', None)
+        
+        # Llamar al servicio
+        resultado = service_sale.listar_todas_ventas(
+            page=page,
+            page_size=page_size,
+            estado=estado,
+            usuario_id=usuario_id
+        )
+        
+        logger.info(f"📋 Listando ventas - Página {resultado['pagination']['page']}/{resultado['pagination']['total_pages']}")
+        
+        return JsonResponse({
+            'ok': True,
+            **resultado
+        })
+        
+    except ValueError as e:
+        return JsonResponse({
+            'ok': False,
+            'error': f'Parámetros inválidos: {str(e)}'
+        }, status=400)
+    except Exception as e:
+        logger.error(f"❌ Error al listar ventas: {str(e)}")
+        return JsonResponse({
+            'ok': False,
+            'error': f'Error al obtener ventas: {str(e)}'
+        }, status=500)
+
+
+@csrf_exempt
+@jwt_required
+@require_http_methods(["GET"])
+def detalle_venta(request, venta_id):
+    """
+    Obtiene el detalle completo de una nota de venta
+    incluyendo todos los productos con sus cantidades y subtotales
+    
+    Response:
+    {
+        "ok": true,
+        "venta": {...}
+    }
+    """
+    try:
+        # Llamar al servicio
+        venta_data = service_sale.obtener_detalle_venta_completo(venta_id)
+        
+        logger.info(f"🔍 Detalle de venta #{venta_id} obtenido")
+        
+        return JsonResponse({
+            'ok': True,
+            'venta': venta_data
+        })
+        
+    except NotaVenta.DoesNotExist:
+        return JsonResponse({
+            'ok': False,
+            'error': f'Nota de venta #{venta_id} no encontrada'
+        }, status=404)
+    except Exception as e:
+        logger.error(f"❌ Error al obtener detalle de venta: {str(e)}")
+        return JsonResponse({
+            'ok': False,
+            'error': f'Error al obtener detalle: {str(e)}'
         }, status=500)

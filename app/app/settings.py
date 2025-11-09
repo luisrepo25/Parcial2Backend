@@ -58,6 +58,10 @@ INSTALLED_APPS = [
     
     # Notificaciones
     'notifications.apps.NotificationsConfig',
+    # Bitacora
+    'bitacora.apps.BitacoraConfig',
+    # Reportes dinámicos
+    'reporte.apps.ReporteConfig',
 ]
 
 
@@ -199,6 +203,9 @@ CLOUDINARY_STORAGE = {
     'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
     'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
 }
+
+# Configuración de Google Gemini AI
+GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 
 # Configuración de almacenamiento por defecto para archivos multimedia
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'

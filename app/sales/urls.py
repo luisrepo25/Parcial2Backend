@@ -21,4 +21,8 @@ urlpatterns = [
     
     # Reembolsos
     path('reembolso/<int:venta_id>/', views.solicitar_reembolso, name='solicitar_reembolso'),
+    
+    # Gestión de ventas (admin/general)
+    path('ventas/', views.listar_ventas, name='listar_ventas'),
+    path('ventas/<int:venta_id>/', views.detalle_venta, name='detalle_venta'),
 ]

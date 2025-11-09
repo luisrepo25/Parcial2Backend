@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 import json
 from ..services import producto as producto_service
 from users.services.jwt import jwt_required
+from bitacora import service_bitacora
 
 # ============= PRODUCTOS =============
 
@@ -87,8 +88,23 @@ def create_producto(request):
             nombre, descripcion, precio, stock, 
             categoria_id, marca_id, garantia_id, imagen
         )
+        
+        # Registrar en bitácora
+        service_bitacora.registrar_accion(
+            accion="CREAR_PRODUCTO",
+            usuario=request.usuario.correo if hasattr(request, 'usuario') else None,
+            detalles=f"Producto creado: {nombre} - Precio: ${precio} - Stock: {stock}",
+            resultado="EXITOSO"
+        )
+        
         return JsonResponse({"ok": True, "producto": producto, "message": "Producto creado exitosamente"}, status=201)
     except ValidationError as e:
+        service_bitacora.registrar_accion(
+            accion="CREAR_PRODUCTO",
+            usuario=request.usuario.correo if hasattr(request, 'usuario') else None,
+            detalles=f"Error al crear producto: {nombre if nombre else 'N/A'} - {str(e)}",
+            resultado="FALLIDO"
+        )
         return JsonResponse({"ok": False, "error": str(e)}, status=400)
     except ValueError as e:
         return JsonResponse({"ok": False, "error": f"Error en formato de datos: {str(e)}"}, status=400)
@@ -184,9 +200,23 @@ def update_producto(request, id):
             categoria_id, marca_id, garantia_id, imagen
         )
         
+        # Registrar en bitácora
+        service_bitacora.registrar_accion(
+            accion="ACTUALIZAR_PRODUCTO",
+            usuario=request.usuario.correo if hasattr(request, 'usuario') else None,
+            detalles=f"Producto ID {id} actualizado - Cambios: {', '.join([k for k, v in {'nombre': nombre, 'precio': precio, 'stock': stock}.items() if v is not None])}",
+            resultado="EXITOSO"
+        )
+        
         print(f"[UPDATE_PRODUCTO] ✅ Producto actualizado exitosamente")
         return JsonResponse({"ok": True, "producto": producto, "message": "Producto actualizado exitosamente"}, status=200)
     except ValidationError as e:
+        service_bitacora.registrar_accion(
+            accion="ACTUALIZAR_PRODUCTO",
+            usuario=request.usuario.correo if hasattr(request, 'usuario') else None,
+            detalles=f"Error al actualizar producto ID {id}: {str(e)}",
+            resultado="FALLIDO"
+        )
         print(f"[UPDATE_PRODUCTO] ❌ ValidationError: {str(e)}")
         return JsonResponse({"ok": False, "error": str(e)}, status=400)
     except ValueError as e:
@@ -210,8 +240,23 @@ def delete_producto(request, id):
     """
     try:
         producto_service.delete_producto(id)
+        
+        # Registrar en bitácora
+        service_bitacora.registrar_accion(
+            accion="ELIMINAR_PRODUCTO",
+            usuario=request.usuario.correo if hasattr(request, 'usuario') else None,
+            detalles=f"Producto ID {id} eliminado",
+            resultado="EXITOSO"
+        )
+        
         return JsonResponse({"ok": True, "message": "Producto eliminado exitosamente"}, status=200)
     except ValidationError as e:
+        service_bitacora.registrar_accion(
+            accion="ELIMINAR_PRODUCTO",
+            usuario=request.usuario.correo if hasattr(request, 'usuario') else None,
+            detalles=f"Error al eliminar producto ID {id}: {str(e)}",
+            resultado="FALLIDO"
+        )
         return JsonResponse({"ok": False, "error": str(e)}, status=404)
     except Exception as e:
         return JsonResponse({"ok": False, "error": str(e)}, status=500)

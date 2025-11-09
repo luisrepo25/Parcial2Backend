@@ -403,3 +403,148 @@ def suscribir_a_tema(tokens, tema):
             'success': False,
             'error': str(e)
         }
+
+
+def listar_todas_notificaciones(page=1, page_size=10, leida=None):
+    """
+    Lista todas las notificaciones del sistema con paginación
+    
+    Args:
+        page: Número de página (default: 1)
+        page_size: Tamaño de página (default: 10, max: 100)
+        leida: Filtrar por estado leído (opcional: True/False)
+    
+    Returns:
+        dict: Notificaciones paginadas y metadata
+    """
+    from django.core.paginator import Paginator, EmptyPage
+    from notifications.models import Notificacion, Noti_Usuario
+    from django.db.models import Count, Q
+    
+    try:
+        # Limitar page_size a máximo 100
+        page_size = min(page_size, 100)
+        
+        # Construir query con anotaciones
+        query = Notificacion.objects.annotate(
+            total_enviados=Count('notificaciones_usuario'),
+            total_leidos=Count('notificaciones_usuario', filter=Q(notificaciones_usuario__leida=True))
+        ).order_by('-created_at')
+        
+        # Aplicar paginación
+        paginator = Paginator(query, page_size)
+        
+        try:
+            notificaciones_page = paginator.page(page)
+        except EmptyPage:
+            notificaciones_page = paginator.page(paginator.num_pages)
+        
+        # Serializar notificaciones
+        notificaciones_data = []
+        for notif in notificaciones_page:
+            notificaciones_data.append({
+                'id': notif.id,
+                'titulo': notif.titulo,
+                'mensaje': notif.mensaje,
+                'created_at': notif.created_at.isoformat(),
+                'updated_at': notif.updated_at.isoformat(),
+                'total_enviados': notif.total_enviados,
+                'total_leidos': notif.total_leidos,
+                'total_no_leidos': notif.total_enviados - notif.total_leidos
+            })
+        
+        logger.info(f"📋 Listando notificaciones - Página {notificaciones_page.number}/{paginator.num_pages}")
+        
+        return {
+            'notificaciones': notificaciones_data,
+            'pagination': {
+                'page': notificaciones_page.number,
+                'page_size': page_size,
+                'total_items': paginator.count,
+                'total_pages': paginator.num_pages,
+                'has_next': notificaciones_page.has_next(),
+                'has_previous': notificaciones_page.has_previous()
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error al listar notificaciones: {str(e)}")
+        return {
+            'success': False,
+            'error': str(e)
+        }
+
+
+def obtener_destinatarios_notificacion(notificacion_id):
+    """
+    Obtiene todos los usuarios que recibieron una notificación específica
+    con su estado de lectura
+    
+    Args:
+        notificacion_id: ID de la notificación
+    
+    Returns:
+        dict: Información de la notificación y sus destinatarios
+    
+    Raises:
+        Notificacion.DoesNotExist: Si la notificación no existe
+    """
+    from notifications.models import Notificacion, Noti_Usuario
+    
+    try:
+        # Obtener la notificación
+        notificacion = Notificacion.objects.get(id=notificacion_id)
+        
+        # Obtener todos los destinatarios
+        destinatarios = Noti_Usuario.objects.filter(
+            notificacion_id=notificacion_id
+        ).select_related('usuario')
+        
+        # Serializar destinatarios
+        usuarios_data = []
+        for noti_usuario in destinatarios:
+            try:
+                cliente = noti_usuario.usuario.cliente
+                nombre_completo = f"{cliente.nombres} {cliente.apellidoPaterno}"
+            except:
+                nombre_completo = "Usuario sin nombre"
+            
+            usuarios_data.append({
+                'id': noti_usuario.id,
+                'usuario': {
+                    'id': noti_usuario.usuario.id,
+                    'nombre': nombre_completo,
+                    'correo': noti_usuario.usuario.correo
+                },
+                'leida': noti_usuario.leida,
+                'fecha_envio': noti_usuario.created_at.isoformat(),
+                'fecha_lectura': noti_usuario.updated_at.isoformat() if noti_usuario.leida else None
+            })
+        
+        # Calcular estadísticas
+        total_enviados = destinatarios.count()
+        total_leidos = destinatarios.filter(leida=True).count()
+        
+        logger.info(f"🔍 Destinatarios de notificación #{notificacion_id}: {total_enviados} usuarios")
+        
+        return {
+            'notificacion': {
+                'id': notificacion.id,
+                'titulo': notificacion.titulo,
+                'mensaje': notificacion.mensaje,
+                'created_at': notificacion.created_at.isoformat()
+            },
+            'estadisticas': {
+                'total_enviados': total_enviados,
+                'total_leidos': total_leidos,
+                'total_no_leidos': total_enviados - total_leidos,
+                'porcentaje_leidos': round((total_leidos / total_enviados * 100), 2) if total_enviados > 0 else 0
+            },
+            'destinatarios': usuarios_data
+        }
+        
+    except Notificacion.DoesNotExist:
+        raise
+    except Exception as e:
+        logger.error(f"❌ Error al obtener destinatarios: {str(e)}")
+        raise

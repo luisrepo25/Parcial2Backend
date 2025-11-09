@@ -23,3 +23,397 @@
 [INFO] 2025-11-08 15:30:24 django.utils.autoreload - Watching for file changes with StatReloader
 [INFO] 2025-11-08 15:30:36 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\notifications\views.py changed, reloading.
 [INFO] 2025-11-08 15:30:38 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 13:25:18 django.utils.autoreload - Watching for file changes with StatReloader
+[WARNING] 2025-11-09 13:27:18 django.request - Not Found: /ventas/
+[WARNING] 2025-11-09 13:27:18 django.server - "GET /ventas/ HTTP/1.1" 404 3095
+[INFO] 2025-11-09 13:27:40 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\sales\urls.py changed, reloading.
+[INFO] 2025-11-09 13:27:42 django.utils.autoreload - Watching for file changes with StatReloader
+[WARNING] 2025-11-09 13:27:48 django.request - Not Found: /ventas/
+[WARNING] 2025-11-09 13:27:48 django.server - "GET /ventas/ HTTP/1.1" 404 3095
+[WARNING] 2025-11-09 13:28:00 django.request - Unauthorized: /sales/ventas/
+[WARNING] 2025-11-09 13:28:00 django.server - "GET //sales/ventas/ HTTP/1.1" 401 58
+[ERROR] 2025-11-09 13:28:12 django.request - Internal Server Error: /sales/ventas/
+[ERROR] 2025-11-09 13:28:12 django.server - "GET //sales/ventas/ HTTP/1.1" 500 93
+[ERROR] 2025-11-09 13:28:28 django.request - Internal Server Error: /sales/ventas/
+[ERROR] 2025-11-09 13:28:28 django.server - "GET //sales/ventas/ HTTP/1.1" 500 93
+[ERROR] 2025-11-09 13:28:41 django.request - Internal Server Error: /sales/ventas/
+[ERROR] 2025-11-09 13:28:41 django.server - "GET //sales/ventas/ HTTP/1.1" 500 93
+[ERROR] 2025-11-09 13:29:44 django.request - Internal Server Error: /sales/ventas/
+[ERROR] 2025-11-09 13:29:44 django.server - "GET //sales/ventas/ HTTP/1.1" 500 93
+[INFO] 2025-11-09 13:30:03 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\sales\urls.py changed, reloading.
+[INFO] 2025-11-09 13:30:04 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 13:30:12 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\sales\service\service_sale.py changed, reloading.
+[INFO] 2025-11-09 13:30:14 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 13:30:30 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\sales\views.py changed, reloading.
+[INFO] 2025-11-09 13:30:32 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 13:30:47 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\sales\views.py changed, reloading.
+[INFO] 2025-11-09 13:30:49 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 13:31:52 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\sales\service\service_sale.py changed, reloading.
+[INFO] 2025-11-09 13:31:54 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 13:32:04 django.server - "GET /sales/ventas/ HTTP/1.1" 200 2858
+[INFO] 2025-11-09 13:34:14 django.server - "GET /sales/ventas/14 HTTP/1.1" 301 0
+[ERROR] 2025-11-09 13:34:17 django.request - Internal Server Error: /sales/ventas/14/
+[ERROR] 2025-11-09 13:34:17 django.server - "GET /sales/ventas/14/ HTTP/1.1" 500 100
+[INFO] 2025-11-09 13:36:36 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\sales\service\service_sale.py changed, reloading.
+[INFO] 2025-11-09 13:36:37 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 13:37:46 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\sales\service\service_sale.py changed, reloading.
+[INFO] 2025-11-09 13:37:48 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 13:37:56 django.server - "GET /sales/ventas/14 HTTP/1.1" 301 0
+[INFO] 2025-11-09 13:37:59 django.server - "GET /sales/ventas/14/ HTTP/1.1" 200 824
+[INFO] 2025-11-09 13:38:47 django.server - "GET /sales/ventas/?page=2 HTTP/1.1" 200 2851
+[INFO] 2025-11-09 13:39:06 django.server - "GET /sales/ventas/?page=3 HTTP/1.1" 200 690
+[INFO] 2025-11-09 13:39:19 django.server - "GET /sales/ventas/?page=1 HTTP/1.1" 200 2858
+[INFO] 2025-11-09 13:39:43 django.server - "GET /sales/ventas/23 HTTP/1.1" 301 0
+[INFO] 2025-11-09 13:39:47 django.server - "GET /sales/ventas/23/ HTTP/1.1" 200 839
+[INFO] 2025-11-09 15:13:26 django.server - "OPTIONS /products/productos HTTP/1.1" 200 0
+[INFO] 2025-11-09 15:13:26 django.server - "OPTIONS /products/productos HTTP/1.1" 200 0
+[WARNING] 2025-11-09 15:13:26 django.request - Unauthorized: /products/productos
+[WARNING] 2025-11-09 15:13:26 django.server - "GET /products/productos HTTP/1.1" 401 40
+[WARNING] 2025-11-09 15:13:26 django.request - Unauthorized: /products/productos
+[WARNING] 2025-11-09 15:13:26 django.server - "GET /products/productos HTTP/1.1" 401 40
+[INFO] 2025-11-09 15:13:51 django.server - "OPTIONS /users/auth HTTP/1.1" 200 0
+[INFO] 2025-11-09 15:13:53 django.server - "POST /users/auth HTTP/1.1" 200 283
+[INFO] 2025-11-09 15:13:55 django.server - - Broken pipe from ('127.0.0.1', 56908)
+[INFO] 2025-11-09 15:13:55 django.server - "GET /products/productos HTTP/1.1" 200 1784
+[INFO] 2025-11-09 15:13:57 django.server - "GET /products/productos HTTP/1.1" 200 1784
+[WARNING] 2025-11-09 15:16:32 django.request - Unauthorized: /sales/ventas/
+[WARNING] 2025-11-09 15:16:32 django.server - "GET /sales/ventas/?page=1 HTTP/1.1" 401 40
+[INFO] 2025-11-09 15:16:59 django.server - "GET /sales/ventas/?page=1 HTTP/1.1" 200 2858
+[INFO] 2025-11-09 15:17:34 django.server - "GET /sales/ventas/23 HTTP/1.1" 301 0
+[INFO] 2025-11-09 15:17:37 django.server - "GET /sales/ventas/23/ HTTP/1.1" 200 839
+[INFO] 2025-11-09 15:18:05 django.server - "GET /sales/ventas/24 HTTP/1.1" 301 0
+[INFO] 2025-11-09 15:18:08 django.server - "GET /sales/ventas/24/ HTTP/1.1" 200 1129
+[INFO] 2025-11-09 15:21:55 django.server - "OPTIONS /products/garantias HTTP/1.1" 200 0
+[INFO] 2025-11-09 15:21:55 django.server - "OPTIONS /products/garantias HTTP/1.1" 200 0
+[INFO] 2025-11-09 15:21:57 django.server - "GET /products/garantias HTTP/1.1" 200 91
+[INFO] 2025-11-09 15:21:58 django.server - "GET /products/garantias HTTP/1.1" 200 91
+[INFO] 2025-11-09 15:26:38 django.server - "OPTIONS /products/categorias HTTP/1.1" 200 0
+[INFO] 2025-11-09 15:26:38 django.server - "OPTIONS /products/categorias HTTP/1.1" 200 0
+[INFO] 2025-11-09 15:26:39 django.server - "GET /products/categorias HTTP/1.1" 200 348
+[INFO] 2025-11-09 15:26:41 django.server - "GET /products/categorias HTTP/1.1" 200 348
+[INFO] 2025-11-09 15:27:06 django.server - "OPTIONS /sales/ventas/?page=1&page_size=10 HTTP/1.1" 200 0
+[INFO] 2025-11-09 15:27:06 django.server - "OPTIONS /sales/ventas/?page=1&page_size=10 HTTP/1.1" 200 0
+[INFO] 2025-11-09 15:27:10 django.server - "GET /sales/ventas/?page=1&page_size=10 HTTP/1.1" 200 2858
+[INFO] 2025-11-09 15:27:14 django.server - "GET /sales/ventas/?page=1&page_size=10 HTTP/1.1" 200 2858
+[INFO] 2025-11-09 15:27:20 django.server - "OPTIONS /sales/ventas/?page=2&page_size=10 HTTP/1.1" 200 0
+[INFO] 2025-11-09 15:27:24 django.server - "GET /sales/ventas/?page=2&page_size=10 HTTP/1.1" 200 2849
+[INFO] 2025-11-09 15:28:07 django.server - "GET /sales/ventas/?page=1&page_size=10 HTTP/1.1" 200 2858
+[INFO] 2025-11-09 15:28:09 django.server - "OPTIONS /sales/ventas/24/ HTTP/1.1" 200 0
+[INFO] 2025-11-09 15:28:09 django.server - "OPTIONS /sales/ventas/24/ HTTP/1.1" 200 0
+[INFO] 2025-11-09 15:28:12 django.server - "GET /sales/ventas/24/ HTTP/1.1" 200 1129
+[INFO] 2025-11-09 15:28:15 django.server - "GET /sales/ventas/24/ HTTP/1.1" 200 1129
+[INFO] 2025-11-09 15:28:24 django.server - "GET /sales/ventas/?page=1&page_size=10 HTTP/1.1" 200 2858
+[INFO] 2025-11-09 15:28:28 django.server - "GET /sales/ventas/?page=1&page_size=10 HTTP/1.1" 200 2858
+[INFO] 2025-11-09 15:31:17 django.server - "GET /products/productos HTTP/1.1" 200 1784
+[INFO] 2025-11-09 15:31:18 django.server - "GET /products/productos HTTP/1.1" 200 1784
+[INFO] 2025-11-09 15:31:22 django.server - "GET /sales/ventas/?page=1&page_size=10 HTTP/1.1" 200 2858
+[INFO] 2025-11-09 15:31:24 django.server - "GET /products/garantias HTTP/1.1" 200 91
+[INFO] 2025-11-09 15:31:26 django.server - "GET /products/garantias HTTP/1.1" 200 91
+[INFO] 2025-11-09 15:31:26 django.server - "GET /sales/ventas/?page=1&page_size=10 HTTP/1.1" 200 2858
+[INFO] 2025-11-09 15:31:35 django.server - "GET /sales/ventas/?page=1&page_size=10 HTTP/1.1" 200 2858
+[INFO] 2025-11-09 15:31:39 django.server - "GET /sales/ventas/?page=1&page_size=10 HTTP/1.1" 200 2858
+[INFO] 2025-11-09 15:43:31 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\notifications\services\fcm_service.py changed, reloading.
+[INFO] 2025-11-09 15:43:35 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 15:43:55 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\notifications\views.py changed, reloading.
+[INFO] 2025-11-09 15:43:57 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 15:44:06 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\notifications\urls.py changed, reloading.
+[INFO] 2025-11-09 15:44:08 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 15:46:07 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\notifications\services\fcm_service.py changed, reloading.
+[INFO] 2025-11-09 15:46:09 django.utils.autoreload - Watching for file changes with StatReloader
+[WARNING] 2025-11-09 15:47:00 django.request - Unauthorized: /notifications/notificaciones/
+[WARNING] 2025-11-09 15:47:00 django.server - "GET /notifications/notificaciones/ HTTP/1.1" 401 58
+[INFO] 2025-11-09 15:47:13 django.server - "GET /notifications/notificaciones/ HTTP/1.1" 200 1278
+[INFO] 2025-11-09 15:47:43 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\sales\views.py changed, reloading.
+[INFO] 2025-11-09 15:47:45 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 15:48:50 django.server - "GET /notifications/notificaciones/3 HTTP/1.1" 301 0
+[INFO] 2025-11-09 15:48:53 django.server - "GET /notifications/notificaciones/3/ HTTP/1.1" 200 493
+[INFO] 2025-11-09 15:50:46 django.server - "GET /notifications/notificaciones/ HTTP/1.1" 200 1278
+[INFO] 2025-11-09 15:55:22 django.server - "GET /notifications/notificaciones/3 HTTP/1.1" 301 0
+[INFO] 2025-11-09 15:55:25 django.server - "GET /notifications/notificaciones/3/ HTTP/1.1" 200 493
+[INFO] 2025-11-09 16:01:23 django.server - "OPTIONS /notifications/notificaciones/?page=1&page_size=10 HTTP/1.1" 200 0
+[INFO] 2025-11-09 16:01:23 django.server - "OPTIONS /notifications/notificaciones/?page=1&page_size=10 HTTP/1.1" 200 0
+[INFO] 2025-11-09 16:01:25 django.server - "GET /notifications/notificaciones/?page=1&page_size=10 HTTP/1.1" 200 1278
+[INFO] 2025-11-09 16:01:26 django.server - "GET /notifications/notificaciones/?page=1&page_size=10 HTTP/1.1" 200 1278
+[INFO] 2025-11-09 16:01:41 django.server - "OPTIONS /notifications/notificaciones/3/ HTTP/1.1" 200 0
+[INFO] 2025-11-09 16:01:41 django.server - "OPTIONS /notifications/notificaciones/3/ HTTP/1.1" 200 0
+[INFO] 2025-11-09 16:01:43 django.server - "GET /notifications/notificaciones/3/ HTTP/1.1" 200 493
+[INFO] 2025-11-09 16:01:45 django.server - "GET /notifications/notificaciones/3/ HTTP/1.1" 200 493
+[INFO] 2025-11-09 16:01:54 django.server - "GET /notifications/notificaciones/?page=1&page_size=10 HTTP/1.1" 200 1278
+[INFO] 2025-11-09 16:01:56 django.server - "GET /notifications/notificaciones/?page=1&page_size=10 HTTP/1.1" 200 1278
+[INFO] 2025-11-09 16:03:09 django.server - "GET /sales/ventas/?page=1&page_size=10 HTTP/1.1" 200 2858
+[INFO] 2025-11-09 16:03:13 django.server - "GET /sales/ventas/?page=1&page_size=10 HTTP/1.1" 200 2858
+[INFO] 2025-11-09 16:05:44 django.server - "GET /notifications/notificaciones/?page=1&page_size=10 HTTP/1.1" 200 1278
+[INFO] 2025-11-09 16:05:46 django.server - "GET /notifications/notificaciones/?page=1&page_size=10 HTTP/1.1" 200 1278
+[INFO] 2025-11-09 16:19:00 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\app\settings.py changed, reloading.
+[INFO] 2025-11-09 16:19:02 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 16:19:32 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\bitacora\models.py changed, reloading.
+[INFO] 2025-11-09 16:19:34 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 16:21:23 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\bitacora\models.py changed, reloading.
+[INFO] 2025-11-09 16:21:25 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 16:33:32 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\app\urls.py changed, reloading.
+[INFO] 2025-11-09 16:33:34 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 16:35:29 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\app\urls.py changed, reloading.
+[INFO] 2025-11-09 16:35:31 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 16:35:44 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\bitacora\urls.py changed, reloading.
+[INFO] 2025-11-09 16:35:45 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 16:36:00 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\app\urls.py changed, reloading.
+[INFO] 2025-11-09 16:36:02 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 16:43:19 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\users\views.py changed, reloading.
+[INFO] 2025-11-09 16:43:21 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 16:43:25 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\users\views.py changed, reloading.
+[INFO] 2025-11-09 16:43:26 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 16:43:29 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\users\views.py changed, reloading.
+[INFO] 2025-11-09 16:43:31 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 16:43:34 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\users\views.py changed, reloading.
+[INFO] 2025-11-09 16:43:36 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 16:43:38 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\users\views.py changed, reloading.
+[INFO] 2025-11-09 16:43:40 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 16:43:59 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\products\views\producto.py changed, reloading.
+[INFO] 2025-11-09 16:44:01 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 16:44:05 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\products\views\producto.py changed, reloading.
+[INFO] 2025-11-09 16:44:07 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 16:44:21 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\products\views\producto.py changed, reloading.
+[INFO] 2025-11-09 16:44:23 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 16:44:57 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\sales\views.py changed, reloading.
+[INFO] 2025-11-09 16:44:59 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 16:45:03 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\sales\views.py changed, reloading.
+[INFO] 2025-11-09 16:45:05 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 16:45:09 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\sales\views.py changed, reloading.
+[INFO] 2025-11-09 16:45:11 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 16:45:37 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\notifications\views.py changed, reloading.
+[INFO] 2025-11-09 16:45:38 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 16:45:42 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\notifications\views.py changed, reloading.
+[INFO] 2025-11-09 16:45:44 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 16:46:54 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\sales\views.py changed, reloading.
+[INFO] 2025-11-09 16:46:55 django.utils.autoreload - Watching for file changes with StatReloader
+[WARNING] 2025-11-09 16:47:13 django.request - Unauthorized: /products/categorias
+[WARNING] 2025-11-09 16:47:13 django.server - "GET /products/categorias HTTP/1.1" 401 40
+[WARNING] 2025-11-09 16:47:13 django.request - Unauthorized: /products/categorias
+[WARNING] 2025-11-09 16:47:13 django.server - "GET /products/categorias HTTP/1.1" 401 40
+[WARNING] 2025-11-09 16:47:15 django.request - Unauthorized: /notifications/notificaciones/
+[WARNING] 2025-11-09 16:47:15 django.server - "GET /notifications/notificaciones/?page=1&page_size=10 HTTP/1.1" 401 40
+[WARNING] 2025-11-09 16:47:15 django.request - Unauthorized: /notifications/notificaciones/
+[WARNING] 2025-11-09 16:47:15 django.server - "GET /notifications/notificaciones/?page=1&page_size=10 HTTP/1.1" 401 40
+[INFO] 2025-11-09 16:47:16 django.server - "OPTIONS /products/marcas HTTP/1.1" 200 0
+[INFO] 2025-11-09 16:47:16 django.server - "OPTIONS /products/marcas HTTP/1.1" 200 0
+[WARNING] 2025-11-09 16:47:16 django.request - Unauthorized: /products/marcas
+[WARNING] 2025-11-09 16:47:16 django.server - "GET /products/marcas HTTP/1.1" 401 40
+[WARNING] 2025-11-09 16:47:16 django.request - Unauthorized: /products/marcas
+[WARNING] 2025-11-09 16:47:16 django.server - "GET /products/marcas HTTP/1.1" 401 40
+[WARNING] 2025-11-09 16:47:17 django.request - Unauthorized: /products/categorias
+[WARNING] 2025-11-09 16:47:17 django.server - "GET /products/categorias HTTP/1.1" 401 40
+[WARNING] 2025-11-09 16:47:17 django.request - Unauthorized: /products/categorias
+[WARNING] 2025-11-09 16:47:17 django.server - "GET /products/categorias HTTP/1.1" 401 40
+[WARNING] 2025-11-09 16:47:18 django.request - Unauthorized: /products/marcas
+[WARNING] 2025-11-09 16:47:18 django.server - "GET /products/marcas HTTP/1.1" 401 40
+[WARNING] 2025-11-09 16:47:18 django.request - Unauthorized: /products/marcas
+[WARNING] 2025-11-09 16:47:18 django.server - "GET /products/marcas HTTP/1.1" 401 40
+[WARNING] 2025-11-09 16:47:18 django.request - Unauthorized: /products/categorias
+[WARNING] 2025-11-09 16:47:18 django.server - "GET /products/categorias HTTP/1.1" 401 40
+[WARNING] 2025-11-09 16:47:18 django.request - Unauthorized: /products/categorias
+[WARNING] 2025-11-09 16:47:18 django.server - "GET /products/categorias HTTP/1.1" 401 40
+[WARNING] 2025-11-09 16:47:18 django.request - Unauthorized: /products/marcas
+[WARNING] 2025-11-09 16:47:18 django.server - "GET /products/marcas HTTP/1.1" 401 40
+[WARNING] 2025-11-09 16:47:18 django.request - Unauthorized: /products/marcas
+[WARNING] 2025-11-09 16:47:18 django.server - "GET /products/marcas HTTP/1.1" 401 40
+[INFO] 2025-11-09 16:47:33 django.server - "POST /users/auth HTTP/1.1" 200 283
+[INFO] 2025-11-09 16:47:35 django.server - - Broken pipe from ('127.0.0.1', 54141)
+[INFO] 2025-11-09 16:47:35 django.server - "GET /products/productos HTTP/1.1" 200 1784
+[INFO] 2025-11-09 16:47:37 django.server - "GET /products/productos HTTP/1.1" 200 1784
+[INFO] 2025-11-09 16:47:55 django.server - "GET /products/categorias HTTP/1.1" 200 348
+[INFO] 2025-11-09 16:47:56 django.server - "GET /products/categorias HTTP/1.1" 200 348
+[INFO] 2025-11-09 16:47:57 django.server - "GET /products/garantias HTTP/1.1" 200 91
+[INFO] 2025-11-09 16:47:59 django.server - "GET /products/garantias HTTP/1.1" 200 91
+[INFO] 2025-11-09 16:48:08 django.server - "GET /products/productos HTTP/1.1" 200 1784
+[INFO] 2025-11-09 16:48:09 django.server - "GET /products/productos HTTP/1.1" 200 1784
+[INFO] 2025-11-09 16:48:12 django.server - "OPTIONS /products/productos/10 HTTP/1.1" 200 0
+[INFO] 2025-11-09 16:48:12 django.server - "OPTIONS /products/productos/10 HTTP/1.1" 200 0
+[INFO] 2025-11-09 16:48:14 django.server - "GET /products/categorias HTTP/1.1" 200 348
+[INFO] 2025-11-09 16:48:14 django.server - "GET /products/marcas HTTP/1.1" 200 135
+[INFO] 2025-11-09 16:48:14 django.server - "GET /products/productos/10 HTTP/1.1" 200 445
+[INFO] 2025-11-09 16:48:14 django.server - "GET /products/garantias HTTP/1.1" 200 91
+[INFO] 2025-11-09 16:48:15 django.server - "GET /products/categorias HTTP/1.1" 200 348
+[INFO] 2025-11-09 16:48:15 django.server - "GET /products/marcas HTTP/1.1" 200 135
+[INFO] 2025-11-09 16:48:15 django.server - "GET /products/productos/10 HTTP/1.1" 200 445
+[INFO] 2025-11-09 16:48:16 django.server - "GET /products/garantias HTTP/1.1" 200 91
+[INFO] 2025-11-09 16:48:17 django.server - "OPTIONS /products/productos/10/update HTTP/1.1" 200 0
+[INFO] 2025-11-09 16:48:20 django.server - "POST /products/productos/10/update HTTP/1.1" 200 493
+[INFO] 2025-11-09 16:48:23 django.server - "GET /products/productos HTTP/1.1" 200 1784
+[INFO] 2025-11-09 16:48:25 django.server - "GET /products/productos HTTP/1.1" 200 1784
+[WARNING] 2025-11-09 16:50:07 django.request - Unauthorized: /bitacora/
+[WARNING] 2025-11-09 16:50:07 django.server - "GET /bitacora/ HTTP/1.1" 401 58
+[INFO] 2025-11-09 16:50:29 django.server - "GET /bitacora/ HTTP/1.1" 200 547
+[INFO] 2025-11-09 16:55:16 django.server - "GET /notifications/notificaciones/?page=1&page_size=10 HTTP/1.1" 200 1278
+[INFO] 2025-11-09 16:55:18 django.server - "GET /notifications/notificaciones/?page=1&page_size=10 HTTP/1.1" 200 1278
+[INFO] 2025-11-09 16:55:54 django.server - "GET /notifications/notificaciones/?page=1&page_size=10 HTTP/1.1" 200 1562
+[INFO] 2025-11-09 16:55:56 django.server - "GET /notifications/notificaciones/?page=1&page_size=10 HTTP/1.1" 200 1562
+[INFO] 2025-11-09 16:58:43 django.server - "GET /sales/ventas/?page=1&page_size=10 HTTP/1.1" 200 2857
+[INFO] 2025-11-09 16:58:47 django.server - "GET /sales/ventas/?page=1&page_size=10 HTTP/1.1" 200 2857
+[INFO] 2025-11-09 16:59:38 django.server - "GET /products/productos HTTP/1.1" 200 1784
+[INFO] 2025-11-09 16:59:40 django.server - "GET /products/productos HTTP/1.1" 200 1784
+[INFO] 2025-11-09 17:00:16 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\bitacora\views.py changed, reloading.
+[INFO] 2025-11-09 17:00:18 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 17:04:44 django.server - "OPTIONS /bitacora/?page=1&page_size=50 HTTP/1.1" 200 0
+[INFO] 2025-11-09 17:04:44 django.server - "OPTIONS /bitacora/?page=1&page_size=50 HTTP/1.1" 200 0
+[INFO] 2025-11-09 17:04:46 django.server - "GET /bitacora/?page=1&page_size=50 HTTP/1.1" 200 800
+[INFO] 2025-11-09 17:04:47 django.server - "GET /bitacora/?page=1&page_size=50 HTTP/1.1" 200 800
+[INFO] 2025-11-09 17:12:34 django.server - "GET /bitacora/?page=1&page_size=50 HTTP/1.1" 200 800
+[INFO] 2025-11-09 17:12:36 django.server - "GET /bitacora/?page=1&page_size=50 HTTP/1.1" 200 800
+[INFO] 2025-11-09 17:12:38 django.server - "GET /bitacora/?page=1&page_size=50 HTTP/1.1" 200 800
+[INFO] 2025-11-09 17:12:39 django.server - "GET /bitacora/?page=1&page_size=50 HTTP/1.1" 200 800
+[INFO] 2025-11-09 17:13:11 django.server - "GET /products/categorias HTTP/1.1" 200 348
+[INFO] 2025-11-09 17:13:13 django.server - "GET /products/categorias HTTP/1.1" 200 348
+[INFO] 2025-11-09 17:13:15 django.server - "GET /products/marcas HTTP/1.1" 200 135
+[INFO] 2025-11-09 17:13:16 django.server - "GET /products/marcas HTTP/1.1" 200 135
+[INFO] 2025-11-09 17:13:16 django.server - "GET /notifications/notificaciones/?page=1&page_size=10 HTTP/1.1" 200 1562
+[INFO] 2025-11-09 17:13:18 django.server - "GET /notifications/notificaciones/?page=1&page_size=10 HTTP/1.1" 200 1562
+[INFO] 2025-11-09 17:13:19 django.server - "GET /bitacora/?page=1&page_size=50 HTTP/1.1" 200 800
+[INFO] 2025-11-09 17:13:21 django.server - "GET /bitacora/?page=1&page_size=50 HTTP/1.1" 200 800
+[INFO] 2025-11-09 17:29:11 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\app\settings.py changed, reloading.
+[INFO] 2025-11-09 17:29:14 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 17:29:17 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\app\urls.py changed, reloading.
+[INFO] 2025-11-09 17:29:19 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 17:30:58 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\reporte\urls.py changed, reloading.
+[INFO] 2025-11-09 17:31:00 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 17:33:08 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\app\settings.py changed, reloading.
+[INFO] 2025-11-09 17:33:10 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 17:34:37 django.server - "POST /users/auth HTTP/1.1" 200 283
+[WARNING] 2025-11-09 17:34:50 django.request - Method Not Allowed (GET): /reportes/generar
+[WARNING] 2025-11-09 17:34:50 django.server - "GET /reportes/generar HTTP/1.1" 405 0
+[INFO] 2025-11-09 17:35:18 httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+[INFO] 2025-11-09 17:35:18 openai._base_client - Retrying request to /chat/completions in 0.397069 seconds
+[INFO] 2025-11-09 17:35:19 httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+[INFO] 2025-11-09 17:35:19 openai._base_client - Retrying request to /chat/completions in 0.798656 seconds
+[INFO] 2025-11-09 17:35:20 httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+[ERROR] 2025-11-09 17:35:20 django.request - Internal Server Error: /reportes/generar
+[ERROR] 2025-11-09 17:35:20 django.server - "POST /reportes/generar HTTP/1.1" 500 413
+[INFO] 2025-11-09 17:44:56 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\app\settings.py changed, reloading.
+[INFO] 2025-11-09 17:44:59 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 17:45:04 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\reporte\services\openai_service.py changed, reloading.
+[INFO] 2025-11-09 17:45:05 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 17:45:39 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\reporte\views.py changed, reloading.
+[INFO] 2025-11-09 17:45:41 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 17:48:17 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\app\settings.py changed, reloading.
+[INFO] 2025-11-09 17:48:19 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 17:48:31 django.server - "POST /users/auth HTTP/1.1" 200 283
+[ERROR] 2025-11-09 17:48:44 django.request - Internal Server Error: /reportes/generar
+[ERROR] 2025-11-09 17:48:44 django.server - "POST /reportes/generar HTTP/1.1" 500 290
+[INFO] 2025-11-09 17:53:10 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\reporte\services\openai_service.py changed, reloading.
+[INFO] 2025-11-09 17:53:14 django.utils.autoreload - Watching for file changes with StatReloader
+[WARNING] 2025-11-09 17:53:31 django.request - Bad Request: /reportes/generar
+[WARNING] 2025-11-09 17:53:31 django.server - "POST /reportes/generar HTTP/1.1" 400 291
+[INFO] 2025-11-09 17:56:20 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\reporte\services\openai_service.py changed, reloading.
+[INFO] 2025-11-09 17:56:24 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 17:57:08 django.server - "POST /reportes/generar HTTP/1.1" 200 1711
+[INFO] 2025-11-09 18:06:29 django.server - "POST /reportes/generar HTTP/1.1" 200 2515
+[ERROR] 2025-11-09 18:09:42 django.request - Internal Server Error: /reportes/generar
+[ERROR] 2025-11-09 18:09:42 django.server - "POST /reportes/generar HTTP/1.1" 500 331
+[ERROR] 2025-11-09 18:17:22 django.request - Internal Server Error: /reportes/generar
+[ERROR] 2025-11-09 18:17:22 django.server - "POST /reportes/generar HTTP/1.1" 500 331
+[INFO] 2025-11-09 18:18:24 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\reporte\services\openai_service.py changed, reloading.
+[INFO] 2025-11-09 18:18:28 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 18:18:33 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\reporte\services\openai_service.py changed, reloading.
+[INFO] 2025-11-09 18:18:35 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 18:20:19 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\reporte\services\openai_service.py changed, reloading.
+[INFO] 2025-11-09 18:20:21 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 18:20:41 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\reporte\services\openai_service.py changed, reloading.
+[INFO] 2025-11-09 18:20:43 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 18:23:47 django.server - "POST /reportes/generar HTTP/1.1" 200 1107
+[WARNING] 2025-11-09 19:01:56 django.request - Unauthorized: /bitacora/
+[WARNING] 2025-11-09 19:01:56 django.server - "GET /bitacora/?page=1&page_size=50 HTTP/1.1" 401 40
+[WARNING] 2025-11-09 19:01:56 django.request - Unauthorized: /bitacora/
+[WARNING] 2025-11-09 19:01:56 django.server - "GET /bitacora/?page=1&page_size=50 HTTP/1.1" 401 40
+[INFO] 2025-11-09 19:02:06 django.server - "OPTIONS /users/auth HTTP/1.1" 200 0
+[INFO] 2025-11-09 19:02:08 django.server - "POST /users/auth HTTP/1.1" 200 283
+[INFO] 2025-11-09 19:02:08 django.server - "OPTIONS /products/productos HTTP/1.1" 200 0
+[INFO] 2025-11-09 19:02:10 django.server - - Broken pipe from ('127.0.0.1', 52358)
+[INFO] 2025-11-09 19:02:11 django.server - "GET /products/productos HTTP/1.1" 200 1784
+[INFO] 2025-11-09 19:02:12 django.server - "GET /products/productos HTTP/1.1" 200 1784
+[INFO] 2025-11-09 19:02:14 django.server - "GET /bitacora/?page=1&page_size=50 HTTP/1.1" 200 2075
+[INFO] 2025-11-09 19:02:16 django.server - "GET /bitacora/?page=1&page_size=50 HTTP/1.1" 200 2075
+[INFO] 2025-11-09 19:02:42 django.server - "OPTIONS /reportes/generar HTTP/1.1" 200 0
+[WARNING] 2025-11-09 19:02:42 django.request - Unauthorized: /reportes/generar
+[WARNING] 2025-11-09 19:02:42 django.server - "POST /reportes/generar HTTP/1.1" 401 58
+[WARNING] 2025-11-09 19:03:19 django.request - Unauthorized: /reportes/generar
+[WARNING] 2025-11-09 19:03:19 django.server - "POST /reportes/generar HTTP/1.1" 401 58
+[INFO] 2025-11-09 19:03:36 django.server - "POST /users/auth HTTP/1.1" 200 283
+[INFO] 2025-11-09 19:03:37 django.server - - Broken pipe from ('127.0.0.1', 52359)
+[INFO] 2025-11-09 19:03:38 django.server - "GET /products/productos HTTP/1.1" 200 1784
+[INFO] 2025-11-09 19:03:40 django.server - "GET /products/productos HTTP/1.1" 200 1784
+[WARNING] 2025-11-09 19:03:54 django.request - Unauthorized: /reportes/generar
+[WARNING] 2025-11-09 19:03:54 django.server - "POST /reportes/generar HTTP/1.1" 401 58
+[INFO] 2025-11-09 19:06:11 django.server - "OPTIONS /bitacora/?page=1&page_size=50 HTTP/1.1" 200 0
+[INFO] 2025-11-09 19:06:11 django.server - "OPTIONS /bitacora/?page=1&page_size=50 HTTP/1.1" 200 0
+[INFO] 2025-11-09 19:06:13 django.server - "GET /bitacora/?page=1&page_size=50 HTTP/1.1" 200 2253
+[INFO] 2025-11-09 19:06:15 django.server - "GET /bitacora/?page=1&page_size=50 HTTP/1.1" 200 2253
+[ERROR] 2025-11-09 19:06:40 django.request - Internal Server Error: /reportes/generar
+[ERROR] 2025-11-09 19:06:40 django.server - "POST /reportes/generar HTTP/1.1" 500 219
+[INFO] 2025-11-09 19:09:34 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\reporte\services\openai_service.py changed, reloading.
+[INFO] 2025-11-09 19:09:38 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 19:09:51 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\reporte\services\openai_service.py changed, reloading.
+[INFO] 2025-11-09 19:09:53 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 19:10:01 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\reporte\services\openai_service.py changed, reloading.
+[INFO] 2025-11-09 19:10:03 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 19:10:12 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\reporte\views.py changed, reloading.
+[INFO] 2025-11-09 19:10:14 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 19:10:27 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\reporte\views.py changed, reloading.
+[INFO] 2025-11-09 19:10:29 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 19:10:41 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\reporte\views.py changed, reloading.
+[INFO] 2025-11-09 19:10:43 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 19:12:39 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\reporte\views.py changed, reloading.
+[INFO] 2025-11-09 19:12:41 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 19:12:53 reporte.views - [REPORTE] Generando reporte para: Dame todos los productos creados este mes
+[INFO] 2025-11-09 19:12:53 reporte.services.openai_service - [GEMINI] Interpretando prompt: Dame todos los productos creados este mes
+[ERROR] 2025-11-09 19:12:54 reporte.services.openai_service - [GEMINI ERROR] Error al interpretar prompt: 404 models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+[ERROR] 2025-11-09 19:12:54 reporte.views - [REPORTE ERROR] Error de Gemini AI: Error al comunicarse con Google Gemini: 404 models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+[ERROR] 2025-11-09 19:12:54 django.request - Internal Server Error: /reportes/generar
+[ERROR] 2025-11-09 19:12:54 django.server - "POST /reportes/generar HTTP/1.1" 500 296
+[INFO] 2025-11-09 19:13:19 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\reporte\services\openai_service.py changed, reloading.
+[INFO] 2025-11-09 19:13:23 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 19:13:49 reporte.views - [REPORTE] Generando reporte para: Dame todos los productos creados este mes
+[INFO] 2025-11-09 19:13:49 reporte.services.openai_service - [GEMINI] Interpretando prompt: Dame todos los productos creados este mes
+[ERROR] 2025-11-09 19:13:50 reporte.services.openai_service - [GEMINI ERROR] Error al interpretar prompt: 404 models/gemini-1.5-pro is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+[ERROR] 2025-11-09 19:13:50 reporte.views - [REPORTE ERROR] Error de Gemini AI: Error al comunicarse con Google Gemini: 404 models/gemini-1.5-pro is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+[ERROR] 2025-11-09 19:13:50 django.request - Internal Server Error: /reportes/generar
+[ERROR] 2025-11-09 19:13:50 django.server - "POST /reportes/generar HTTP/1.1" 500 294
+[INFO] 2025-11-09 19:13:57 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\reporte\services\openai_service.py changed, reloading.
+[INFO] 2025-11-09 19:14:01 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 19:14:38 reporte.views - [REPORTE] Generando reporte para: Dame todos los productos creados este mes
+[INFO] 2025-11-09 19:14:38 reporte.services.openai_service - [GEMINI] Interpretando prompt: Dame todos los productos creados este mes
+[INFO] 2025-11-09 19:14:48 reporte.services.openai_service - [GEMINI] Finish reason: 2
+[ERROR] 2025-11-09 19:14:48 reporte.services.openai_service - [GEMINI ERROR] Respuesta bloqueada por filtros de seguridad
+[ERROR] 2025-11-09 19:14:48 reporte.services.openai_service - [GEMINI ERROR] Error al interpretar prompt: El contenido fue bloqueado por filtros de seguridad. Intenta reformular el prompt de manera más neutral.
+[ERROR] 2025-11-09 19:14:48 reporte.views - [REPORTE ERROR] Error de Gemini AI: Error al comunicarse con Google Gemini: El contenido fue bloqueado por filtros de seguridad. Intenta reformular el prompt de manera más neutral.
+[ERROR] 2025-11-09 19:14:48 django.request - Internal Server Error: /reportes/generar
+[ERROR] 2025-11-09 19:14:48 django.server - "POST /reportes/generar HTTP/1.1" 500 219
+[INFO] 2025-11-09 19:16:15 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\reporte\services\openai_service.py changed, reloading.
+[INFO] 2025-11-09 19:16:19 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 19:16:31 reporte.views - [REPORTE] Generando reporte para: Dame todos los productos creados este mes
+[INFO] 2025-11-09 19:16:31 reporte.services.openai_service - [GEMINI] Interpretando prompt: Dame todos los productos creados este mes
+[INFO] 2025-11-09 19:16:36 reporte.services.openai_service - [GEMINI] Finish reason: 1
+[INFO] 2025-11-09 19:16:36 reporte.services.openai_service - [GEMINI] Respuesta recibida: ```json
+{
+    "tipo_reporte": "productos",
+    "filtros": {
+        "fecha_desde": "2025-11-01",
+        "fecha_hasta": "2025-11-09"
+    },
+    "campos": ["id", "nombre", "descripcion", "precio", "stock", "categoria_id", "marca_id", "created_at"],
+    "agrupacion": null,
+    "orden": null,
+    "limite": null
+}
+```
+[INFO] 2025-11-09 19:16:36 reporte.services.openai_service - [GEMINI SUCCESS] Interpretacion exitosa: {'tipo_reporte': 'productos', 'filtros': {'fecha_desde': '2025-11-01', 'fecha_hasta': '2025-11-09'}, 'campos': ['id', 'nombre', 'descripcion', 'precio', 'stock', 'categoria_id', 'marca_id', 'created_at'], 'agrupacion': None, 'orden': None, 'limite': None}
+[INFO] 2025-11-09 19:16:36 reporte.views - [REPORTE] Interpretacion: {'tipo_reporte': 'productos', 'filtros': {'fecha_desde': '2025-11-01', 'fecha_hasta': '2025-11-09'}, 'campos': ['id', 'nombre', 'descripcion', 'precio', 'stock', 'categoria_id', 'marca_id', 'created_at'], 'agrupacion': None, 'orden': None, 'limite': None}
+[WARNING] 2025-11-09 19:16:36 reporte.views - [REPORTE WARNING] Estructura invalida: El orden debe ser 'asc' o 'desc'
+[WARNING] 2025-11-09 19:16:36 django.request - Bad Request: /reportes/generar
+[WARNING] 2025-11-09 19:16:36 django.server - "POST /reportes/generar HTTP/1.1" 400 333
+[INFO] 2025-11-09 19:17:45 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\reporte\services\openai_service.py changed, reloading.
+[INFO] 2025-11-09 19:17:49 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 19:18:05 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\reporte\services\openai_service.py changed, reloading.
+[INFO] 2025-11-09 19:18:07 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 19:18:20 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\reporte\services\openai_service.py changed, reloading.
+[INFO] 2025-11-09 19:18:22 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 19:19:19 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\reporte\services\openai_service.py changed, reloading.
+[INFO] 2025-11-09 19:19:20 django.utils.autoreload - Watching for file changes with StatReloader

@@ -358,7 +358,7 @@ def webhook_stripe(request):
             if nota_venta.usuario.fcm_token:
                 fcm_service.enviar_notificacion_fcm(
                     token=nota_venta.usuario.fcm_token,
-                    titulo="¡Pago Exitoso! 🎉",
+                    titulo="¡Pago Exitoso!",
                     mensaje=f"Tu compra de ${nota_venta.total} ha sido confirmada",
                     data={
                         'tipo': 'pago_exitoso',

@@ -4,6 +4,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ValidationError
 from users.services.jwt import jwt_required
+from bitacora import service_bitacora
 
 import json
 
@@ -73,8 +74,21 @@ def create_user(request):
             kwargs["nombre"] = payload.get("nombre")
         
         usuario = user_services.create_user(correo, password, tipo_usuario, **kwargs)
+        
+        # Registrar en bitácora
+        service_bitacora.registrar_accion(
+            accion="CREAR_USUARIO",
+            detalles=f"Usuario creado: {correo} - Tipo: {tipo_usuario}",
+            resultado="EXITOSO"
+        )
+        
         return JsonResponse({"ok": True, "usuario": usuario}, status=201)
     except ValidationError as e:
+        service_bitacora.registrar_accion(
+            accion="CREAR_USUARIO",
+            detalles=f"Error al crear usuario: {correo} - {str(e)}",
+            resultado="FALLIDO"
+        )
         return JsonResponse({"ok": False, "error": str(e)}, status=400)
     except Exception as e:
         return JsonResponse({"ok": False, "error": str(e)}, status=500)
@@ -96,8 +110,23 @@ def update_user(request, id):
         password = payload.get("password")
         
         usuario = user_services.update_user(id, correo, password)
+        
+        # Registrar en bitácora
+        service_bitacora.registrar_accion(
+            accion="ACTUALIZAR_USUARIO",
+            usuario=request.usuario.correo if hasattr(request, 'usuario') else None,
+            detalles=f"Usuario ID {id} actualizado",
+            resultado="EXITOSO"
+        )
+        
         return JsonResponse({"ok": True, "usuario": usuario}, status=200)
     except ValidationError as e:
+        service_bitacora.registrar_accion(
+            accion="ACTUALIZAR_USUARIO",
+            usuario=request.usuario.correo if hasattr(request, 'usuario') else None,
+            detalles=f"Error al actualizar usuario ID {id}: {str(e)}",
+            resultado="FALLIDO"
+        )
         return JsonResponse({"ok": False, "error": str(e)}, status=400)
     except Exception as e:
         return JsonResponse({"ok": False, "error": str(e)}, status=500)
@@ -109,8 +138,23 @@ def delete_user(request, id):
     """DELETE /users/<id>/delete - Elimina un usuario"""
     try:
         user_services.delete_user(id)
+        
+        # Registrar en bitácora
+        service_bitacora.registrar_accion(
+            accion="ELIMINAR_USUARIO",
+            usuario=request.usuario.correo if hasattr(request, 'usuario') else None,
+            detalles=f"Usuario ID {id} eliminado",
+            resultado="EXITOSO"
+        )
+        
         return JsonResponse({"ok": True, "message": "Usuario eliminado"}, status=200)
     except ValidationError as e:
+        service_bitacora.registrar_accion(
+            accion="ELIMINAR_USUARIO",
+            usuario=request.usuario.correo if hasattr(request, 'usuario') else None,
+            detalles=f"Error al eliminar usuario ID {id}: {str(e)}",
+            resultado="FALLIDO"
+        )
         return JsonResponse({"ok": False, "error": str(e)}, status=404)
     except Exception as e:
         return JsonResponse({"ok": False, "error": str(e)}, status=500)
@@ -170,8 +214,21 @@ def register_cliente(request):
         resultado = user_services.create_cliente(
             correo, nombres, password, apellidoMaterno, apellidoPaterno, ci, telefono
         )
+        
+        # Registrar en bitácora
+        service_bitacora.registrar_accion(
+            accion="REGISTRO_CLIENTE",
+            detalles=f"Cliente registrado: {correo} - {nombres} {apellidoPaterno}",
+            resultado="EXITOSO"
+        )
+        
         return JsonResponse({"ok": True, "resultado": resultado}, status=201)
     except ValidationError as e:
+        service_bitacora.registrar_accion(
+            accion="REGISTRO_CLIENTE",
+            detalles=f"Error al registrar cliente: {correo} - {str(e)}",
+            resultado="FALLIDO"
+        )
         return JsonResponse({"ok": False, "error": str(e)}, status=400)
     except Exception as e:
         return JsonResponse({"ok": False, "error": str(e)}, status=500)
@@ -324,6 +381,13 @@ def login(request):
         )
         
         if not usuario:
+            # Registrar intento fallido
+            service_bitacora.registrar_accion(
+                accion="LOGIN",
+                usuario=payload.get("correo"),
+                detalles=f"Intento de login fallido para: {payload.get('correo')}",
+                resultado="FALLIDO"
+            )
             return JsonResponse({"ok": False, "msg": "credenciales inválidas"}, status=401)
 
         # Datos base del usuario
@@ -360,6 +424,14 @@ def login(request):
             }
         else:
             user_data["rol"] = "usuario"
+        
+        # Registrar login exitoso
+        service_bitacora.registrar_accion(
+            accion="LOGIN",
+            usuario=usuario.correo,
+            detalles=f"Login exitoso - Rol: {user_data['rol']}",
+            resultado="EXITOSO"
+        )
 
         return JsonResponse({"ok": True, "usuario": user_data})
     except Exception as e:
