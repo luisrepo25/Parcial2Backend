@@ -116,19 +116,21 @@ Content-Type: application/json
 ### Body - Request
 
 ```json
-[
-  {
-    "producto_id": 1,
-    "cantidad": 2
-  },
-  {
-    "producto_id": 3,
-    "cantidad": 1
-  }
-]
+{
+  "items": [
+    {
+      "producto_id": 1,
+      "cantidad": 2
+    },
+    {
+      "producto_id": 3,
+      "cantidad": 1
+    }
+  ]
+}
 ```
 
-**Nota:** El body es un array directamente, no un objeto con propiedad `items`.
+**Nota:** El formato es idéntico al de `/checkout/create/`.
 
 ### Response - Éxito (200)
 
@@ -146,8 +148,28 @@ Content-Type: application/json
 
 ```dart
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-// Usar el clientSecret con Stripe SDK
+// 1. Crear Payment Intent en tu backend
+final response = await http.post(
+  Uri.parse('$baseUrl/sales/create-payment/'),
+  headers: {
+    'Authorization': 'Bearer $token',
+    'Content-Type': 'application/json'
+  },
+  body: jsonEncode({
+    'items': [
+      {'producto_id': 1, 'cantidad': 2},
+      {'producto_id': 3, 'cantidad': 1}
+    ]
+  }),
+);
+
+final data = jsonDecode(response.body);
+String clientSecret = data['clientSecret'];
+
+// 2. Inicializar Payment Sheet
 await Stripe.instance.initPaymentSheet(
   paymentSheetParameters: SetupPaymentSheetParameters(
     paymentIntentClientSecret: clientSecret,
@@ -155,6 +177,7 @@ await Stripe.instance.initPaymentSheet(
   ),
 );
 
+// 3. Presentar al usuario
 await Stripe.instance.presentPaymentSheet();
 ```
 
@@ -163,7 +186,7 @@ await Stripe.instance.presentPaymentSheet();
 ```json
 {
   "ok": false,
-  "error": "Se requiere una lista con al menos un item: [{\"producto_id\": int, \"cantidad\": int}]"
+  "error": "Se requiere al menos un item en la compra"
 }
 ```
 
@@ -199,7 +222,7 @@ await Stripe.instance.presentPaymentSheet();
 | Característica   | Checkout Web (`/checkout/create/`) | Payment Intent (`/create-payment/`) |
 | ---------------- | ---------------------------------- | ----------------------------------- |
 | **Uso**          | Redirecciona a Stripe Checkout     | Pago nativo en la app               |
-| **Body**         | `{"items": [...]}`                 | `[...]` (array directo)             |
+| **Body**         | `{"items": [...]}`                 | `{"items": [...]}` (mismo formato)  |
 | **Response**     | URL de checkout                    | `clientSecret`                      |
 | **Confirmación** | Automática por Stripe              | Manejada por la app                 |
 | **UI**           | Stripe hosted page                 | UI personalizada en tu app          |

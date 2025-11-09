@@ -565,10 +565,12 @@ def crear_payment_intent(request):
     Este endpoint es específico para pagos nativos en aplicaciones móviles.
     
     Body esperado:
-    [
-        {"producto_id": 1, "cantidad": 2},
-        {"producto_id": 3, "cantidad": 1}
-    ]
+    {
+        "items": [
+            {"producto_id": 1, "cantidad": 2},
+            {"producto_id": 3, "cantidad": 1}
+        ]
+    }
     
     Response:
     {
@@ -580,13 +582,14 @@ def crear_payment_intent(request):
     }
     """
     try:
-        # Parsear body como array
-        items_data = json.loads(request.body)
+        # Parsear body
+        data = json.loads(request.body)
+        items_data = data.get('items', [])
         
-        if not isinstance(items_data, list) or not items_data:
+        if not items_data:
             return JsonResponse({
                 'ok': False,
-                'error': 'Se requiere una lista con al menos un item: [{"producto_id": int, "cantidad": int}]'
+                'error': 'Se requiere al menos un item en la compra'
             }, status=400)
         
         # Validar disponibilidad de productos y calcular total
