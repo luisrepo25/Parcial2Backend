@@ -417,3 +417,96 @@
 [INFO] 2025-11-09 19:18:22 django.utils.autoreload - Watching for file changes with StatReloader
 [INFO] 2025-11-09 19:19:19 django.utils.autoreload - D:\MarioUniv\10mo\Matoneada Si2\Backend\app\reporte\services\openai_service.py changed, reloading.
 [INFO] 2025-11-09 19:19:20 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-09 19:19:47 reporte.views - [REPORTE] Generando reporte para: Dame todos los productos creados este mes
+[INFO] 2025-11-09 19:19:47 reporte.services.openai_service - [GEMINI] Interpretando prompt: Dame todos los productos creados este mes
+[INFO] 2025-11-09 19:19:50 reporte.services.openai_service - [GEMINI] Finish reason: 1
+[INFO] 2025-11-09 19:19:50 reporte.services.openai_service - [GEMINI] Respuesta recibida: {
+    "tipo_reporte": "productos",
+    "filtros": {
+        "fecha_desde": "2025-11-01",
+        "fecha_hasta": "2025-11-09"
+    },
+    "campos": ["id", "nombre", "descripcion", "precio", "stock", "categoria_id", "marca_id", "garantia_id", "imagen", "created_at", "updated_at"],
+    "agrupacion": null,
+    "orden": "desc"
+}
+[INFO] 2025-11-09 19:19:50 reporte.services.openai_service - [GEMINI SUCCESS] Interpretacion exitosa: {'tipo_reporte': 'productos', 'filtros': {'fecha_desde': '2025-11-01', 'fecha_hasta': '2025-11-09'}, 'campos': ['id', 'nombre', 'descripcion', 'precio', 'stock', 'categoria_id', 'marca_id', 'garantia_id', 'imagen', 'created_at', 'updated_at'], 'agrupacion': None, 'orden': 'desc'}
+[INFO] 2025-11-09 19:19:50 reporte.views - [REPORTE] Interpretacion: {'tipo_reporte': 'productos', 'filtros': {'fecha_desde': '2025-11-01', 'fecha_hasta': '2025-11-09'}, 'campos': ['id', 'nombre', 'descripcion', 'precio', 'stock', 'categoria_id', 'marca_id', 'garantia_id', 'imagen', 'created_at', 'updated_at'], 'agrupacion': None, 'orden': 'desc'}
+[INFO] 2025-11-09 19:19:50 reporte.views - [REPORTE] Reporte generado: 4 registros
+[INFO] 2025-11-09 19:19:51 django.server - "POST /reportes/generar HTTP/1.1" 200 1173
+[INFO] 2025-11-09 19:20:58 reporte.views - [REPORTE] Generando reporte para: Dame todas las ventas de esta semana
+[INFO] 2025-11-09 19:20:58 reporte.services.openai_service - [GEMINI] Interpretando prompt: Dame todas las ventas de esta semana
+[INFO] 2025-11-09 19:21:01 reporte.services.openai_service - [GEMINI] Finish reason: 1
+[INFO] 2025-11-09 19:21:01 reporte.services.openai_service - [GEMINI] Respuesta recibida: {
+    "tipo_reporte": "ventas",
+    "filtros": {
+        "fecha_desde": "2025-11-03",
+        "fecha_hasta": "2025-11-09"
+    },
+    "campos": ["id", "total", "estado", "usuario_id", "metodo_pago_id", "created_at", "updated_at"],
+    "agrupacion": null,
+    "orden": "desc"
+}
+[INFO] 2025-11-09 19:21:01 reporte.services.openai_service - [GEMINI SUCCESS] Interpretacion exitosa: {'tipo_reporte': 'ventas', 'filtros': {'fecha_desde': '2025-11-03', 'fecha_hasta': '2025-11-09'}, 'campos': ['id', 'total', 'estado', 'usuario_id', 'metodo_pago_id', 'created_at', 'updated_at'], 'agrupacion': None, 'orden': 'desc'}
+[INFO] 2025-11-09 19:21:01 reporte.views - [REPORTE] Interpretacion: {'tipo_reporte': 'ventas', 'filtros': {'fecha_desde': '2025-11-03', 'fecha_hasta': '2025-11-09'}, 'campos': ['id', 'total', 'estado', 'usuario_id', 'metodo_pago_id', 'created_at', 'updated_at'], 'agrupacion': None, 'orden': 'desc'}
+[INFO] 2025-11-09 19:21:02 reporte.views - [REPORTE] Reporte generado: 24 registros
+[INFO] 2025-11-09 19:21:02 django.server - "POST /reportes/generar HTTP/1.1" 200 4372
+[INFO] 2025-11-09 19:23:37 django.server - "OPTIONS /notifications/notificaciones/?page=1&page_size=10 HTTP/1.1" 200 0
+[INFO] 2025-11-09 19:23:37 django.server - "OPTIONS /notifications/notificaciones/?page=1&page_size=10 HTTP/1.1" 200 0
+[INFO] 2025-11-09 19:23:39 django.server - "GET /notifications/notificaciones/?page=1&page_size=10 HTTP/1.1" 200 1562
+[INFO] 2025-11-09 19:23:40 django.server - "GET /notifications/notificaciones/?page=1&page_size=10 HTTP/1.1" 200 1562
+[INFO] 2025-11-09 19:23:51 django.server - "OPTIONS /sales/ventas/?page=1&page_size=10 HTTP/1.1" 200 0
+[INFO] 2025-11-09 19:23:51 django.server - "OPTIONS /sales/ventas/?page=1&page_size=10 HTTP/1.1" 200 0
+[INFO] 2025-11-09 19:23:55 django.server - "GET /sales/ventas/?page=1&page_size=10 HTTP/1.1" 200 2857
+[INFO] 2025-11-09 19:24:00 django.server - "GET /sales/ventas/?page=1&page_size=10 HTTP/1.1" 200 2857
+[INFO] 2025-11-11 21:11:41 django.utils.autoreload - Watching for file changes with StatReloader
+[INFO] 2025-11-11 21:13:00 django.server - "OPTIONS /products/productos HTTP/1.1" 200 0
+[INFO] 2025-11-11 21:13:00 django.server - "OPTIONS /products/productos HTTP/1.1" 200 0
+[WARNING] 2025-11-11 21:13:00 django.request - Unauthorized: /products/productos
+[WARNING] 2025-11-11 21:13:00 django.server - "GET /products/productos HTTP/1.1" 401 40
+[WARNING] 2025-11-11 21:13:00 django.request - Unauthorized: /products/productos
+[WARNING] 2025-11-11 21:13:00 django.server - "GET /products/productos HTTP/1.1" 401 40
+[INFO] 2025-11-11 21:13:09 django.server - "OPTIONS /users/auth HTTP/1.1" 200 0
+[INFO] 2025-11-11 21:13:12 django.server - "POST /users/auth HTTP/1.1" 200 283
+[INFO] 2025-11-11 21:13:14 django.server - - Broken pipe from ('127.0.0.1', 62589)
+[INFO] 2025-11-11 21:13:14 django.server - "GET /products/productos HTTP/1.1" 200 1784
+[INFO] 2025-11-11 21:13:16 django.server - "GET /products/productos HTTP/1.1" 200 1784
+[INFO] 2025-11-11 21:13:21 django.server - "OPTIONS /bitacora/?page=1&page_size=50 HTTP/1.1" 200 0
+[INFO] 2025-11-11 21:13:21 django.server - "OPTIONS /bitacora/?page=1&page_size=50 HTTP/1.1" 200 0
+[INFO] 2025-11-11 21:13:23 django.server - "GET /bitacora/?page=1&page_size=50 HTTP/1.1" 200 2947
+[INFO] 2025-11-11 21:13:25 django.server - "GET /bitacora/?page=1&page_size=50 HTTP/1.1" 200 2947
+[INFO] 2025-11-11 21:14:18 django.server - "OPTIONS /products/categorias HTTP/1.1" 200 0
+[INFO] 2025-11-11 21:14:18 django.server - "OPTIONS /products/categorias HTTP/1.1" 200 0
+[INFO] 2025-11-11 21:14:19 django.server - "OPTIONS /products/marcas HTTP/1.1" 200 0
+[INFO] 2025-11-11 21:14:19 django.server - "OPTIONS /products/marcas HTTP/1.1" 200 0
+[INFO] 2025-11-11 21:14:19 django.server - "OPTIONS /products/garantias HTTP/1.1" 200 0
+[INFO] 2025-11-11 21:14:19 django.server - "OPTIONS /products/garantias HTTP/1.1" 200 0
+[INFO] 2025-11-11 21:14:20 django.server - "GET /products/categorias HTTP/1.1" 200 348
+[INFO] 2025-11-11 21:14:21 django.server - "GET /products/marcas HTTP/1.1" 200 135
+[INFO] 2025-11-11 21:14:21 django.server - "GET /products/garantias HTTP/1.1" 200 91
+[INFO] 2025-11-11 21:14:21 django.server - "OPTIONS /sales/ventas/?page=1&page_size=10 HTTP/1.1" 200 0
+[INFO] 2025-11-11 21:14:21 django.server - "OPTIONS /sales/ventas/?page=1&page_size=10 HTTP/1.1" 200 0
+[INFO] 2025-11-11 21:14:22 django.server - "GET /products/categorias HTTP/1.1" 200 348
+[INFO] 2025-11-11 21:14:23 django.server - "GET /products/marcas HTTP/1.1" 200 135
+[INFO] 2025-11-11 21:14:23 django.server - "GET /products/garantias HTTP/1.1" 200 91
+[INFO] 2025-11-11 21:14:26 django.server - "GET /sales/ventas/?page=1&page_size=10 HTTP/1.1" 200 2857
+[INFO] 2025-11-11 21:14:30 django.server - "OPTIONS /users/admins HTTP/1.1" 200 0
+[INFO] 2025-11-11 21:14:30 django.server - "OPTIONS /users/clientes HTTP/1.1" 200 0
+[INFO] 2025-11-11 21:14:30 django.server - "OPTIONS /users/clientes HTTP/1.1" 200 0
+[INFO] 2025-11-11 21:14:30 django.server - "OPTIONS /users/admins HTTP/1.1" 200 0
+[INFO] 2025-11-11 21:14:30 django.server - "GET /users/clientes HTTP/1.1" 301 0
+[INFO] 2025-11-11 21:14:30 django.server - "GET /users/admins HTTP/1.1" 301 0
+[INFO] 2025-11-11 21:14:30 django.server - "OPTIONS /users/clientes/ HTTP/1.1" 200 0
+[INFO] 2025-11-11 21:14:30 django.server - "OPTIONS /users/clientes/ HTTP/1.1" 200 0
+[INFO] 2025-11-11 21:14:30 django.server - "OPTIONS /users/admins/ HTTP/1.1" 200 0
+[INFO] 2025-11-11 21:14:30 django.server - "GET /sales/ventas/?page=1&page_size=10 HTTP/1.1" 200 2857
+[INFO] 2025-11-11 21:14:30 django.server - "OPTIONS /users/admins/ HTTP/1.1" 200 0
+[INFO] 2025-11-11 21:14:32 django.server - "GET /users/clientes/ HTTP/1.1" 200 389
+[INFO] 2025-11-11 21:14:32 django.server - "GET /users/admins/ HTTP/1.1" 200 100
+[INFO] 2025-11-11 21:14:33 django.server - "GET /users/clientes/ HTTP/1.1" 200 389
+[INFO] 2025-11-11 21:14:33 django.server - "GET /users/admins/ HTTP/1.1" 200 100
+[INFO] 2025-11-11 21:15:08 django.server - "OPTIONS /notifications/notificaciones/?page=1&page_size=10 HTTP/1.1" 200 0
+[INFO] 2025-11-11 21:15:08 django.server - "OPTIONS /notifications/notificaciones/?page=1&page_size=10 HTTP/1.1" 200 0
+[INFO] 2025-11-11 21:15:10 django.server - "GET /notifications/notificaciones/?page=1&page_size=10 HTTP/1.1" 200 1562
+[INFO] 2025-11-11 21:15:12 django.server - "GET /notifications/notificaciones/?page=1&page_size=10 HTTP/1.1" 200 1562
+[INFO] 2025-11-11 21:33:50 django.utils.autoreload - Watching for file changes with StatReloader
